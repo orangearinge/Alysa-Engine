@@ -1,21 +1,21 @@
-    # Virtual environment
-    venv/
-    .venv/
+# Virtual environment
+venv/
+.venv/
 
-    # Python bytecode
-    __pycache__/
-    *.pyc
+# Python bytecode
+__pycache__/
+*.pyc
 
-    # Editor/IDE files
-    .vscode/
-    .idea/
-    *.sublime-project
-    *.sublime-workspace
+# Editor/IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
 
-    # Logs and temporary files
-    *.log
-    *.tmp
+# Logs and temporary files
+*.log
+*.tmp
 
-    # Sensitive configuration files
-    .env
-    config.ini
+# Sensitive configuration files
+.env
+config.ini
