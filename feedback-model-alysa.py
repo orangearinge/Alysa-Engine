@@ -79,11 +79,12 @@ def ai_toefl_feedback(essay_text):
 # Example Test
 # ------------------------------------------------------------
 essay = """
-Many students want study abroad because they believe it give them more opportunity. 
-Studying in another country help them learn different culture and language. 
-But sometimes they feel lonely and hard to adapt new environment. 
-In my view, studying abroad is good experience if student prepare well before go.
-"""
+enviroments"""
+# Many students want study abroad because they believe it give them more opportunity. 
+# Studying in another country help them learn different culture and language. 
+# But sometimes they feel lonely and hard to adapt new environment. 
+# In my view, studying abroad is good experience if student prepare well before go.
+# """
 
 result = ai_toefl_feedback(essay)
 print(result)
