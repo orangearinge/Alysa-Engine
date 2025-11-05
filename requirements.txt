@@ -1,1 +1,7 @@
 genai
+flask==2.3.3
+language-tool-python==3.2.4
+sentence-transformers==2.2.2
+torch==2.0.1
+gradio==4.7.1
+google-generativeai==0.3.2

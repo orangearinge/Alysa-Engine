@@ -16,7 +16,10 @@ def ai_toefl_feedback(essay_text):
     detailed_corrections = []
     for match in matches:
         detailed_corrections.append({
+            "offset": match.offset,  # posisi mulai error
+            "length": match.errorLength,  # panjang error
             "context": match.context.strip(),
+            "error_text": essay_text[match.offset:match.offset + match.errorLength],
             "suggestion": match.replacements[0] if match.replacements else None,
             "message": match.message
         })
@@ -76,15 +79,17 @@ def ai_toefl_feedback(essay_text):
     }
 
 # ------------------------------------------------------------
-# Example Test
+# Example Test - Only runs when file is executed directly
 # ------------------------------------------------------------
-essay = """
-enviroments"""
-# Many students want study abroad because they believe it give them more opportunity. 
-# Studying in another country help them learn different culture and language. 
-# But sometimes they feel lonely and hard to adapt new environment. 
-# In my view, studying abroad is good experience if student prepare well before go.
-# """
-
-result = ai_toefl_feedback(essay)
-print(result)
+if __name__ == "__main__":
+    essay = """
+    Many students want study abroad because they believe it give them more opportunity. 
+    Studying in another country help them learn different culture and language. 
+    But sometimes they feel lonely and hard to adapt new environment. 
+    In my view, studying abroad is good experience if student prepare well before go.
+    """
+    
+    print("Testing Alysa TOEFL Feedback Model...")
+    result = ai_toefl_feedback(essay)
+    print("Result:")
+    print(result)
