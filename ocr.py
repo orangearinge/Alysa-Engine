@@ -1,17 +1,22 @@
 import easyocr
 from PIL import Image
 import numpy as np
-import google.generativeai as genai
+from google import genai
 import json
 import gradio as gr
 import re
+import os
+import ssl
+import certifi
+ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
 
 # -----------------------------------
 # KONFIGURASI API GEMINI
 # -----------------------------------
 GEMINI_API_KEY = "AIzaSyAP-1OSgvqEJKOmIJQzR2uPnpa0eupPxg8"
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-2.5-flash")
+os.environ['GEMINI_API_KEY'] = GEMINI_API_KEY
+
+client = genai.Client()
 
 # -----------------------------------
 # SETUP OCR
@@ -21,8 +26,6 @@ reader = easyocr.Reader(['id', 'en'])
 # -----------------------------------
 # FUNGSI UTAMA
 # -----------------------------------
-import json
-import numpy as np
 
 def process_image(image):
     if image is None:
@@ -70,7 +73,10 @@ Text: {ocr_text}
 """
 
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt
+        )
         text = response.text.strip()
 
         # Bersihkan potensi ```json ... ```
