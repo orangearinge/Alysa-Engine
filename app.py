@@ -195,7 +195,7 @@ def register():
         db.session.commit()
         
         # Create access token
-        access_token = create_access_token(identity=new_user.id)
+        access_token = create_access_token(identity=str(new_user.id))
         
         return jsonify({
             'message': 'User registered successfully',
@@ -225,7 +225,7 @@ def login():
             return jsonify({'error': 'Invalid credentials'}), 401
         
         # Create access token
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
         
         return jsonify({
             'message': 'Login successful',
@@ -250,7 +250,7 @@ def get_learning_questions():
 @jwt_required()
 def submit_learning_answer():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         data = request.get_json()
         
         if not data or not data.get('question_id') or not data.get('answer'):
@@ -295,7 +295,7 @@ def submit_learning_answer():
 @jwt_required()
 def start_test_session():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         
         # Create new test session
         test_session = TestSession(
@@ -321,7 +321,7 @@ def start_test_session():
 @jwt_required()
 def submit_test_answers():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         data = request.get_json()
         
         if not data or not data.get('session_id') or not data.get('answers'):
@@ -407,7 +407,7 @@ def submit_test_answers():
 @jwt_required()
 def ocr_translate():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         
         if 'image' not in request.files:
             return jsonify({'error': 'No image file provided'}), 400
@@ -447,7 +447,7 @@ def ocr_translate():
 @jwt_required()
 def get_user_attempts():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         attempts = UserAttempt.query.filter_by(user_id=user_id).order_by(UserAttempt.created_at.desc()).all()
         
         attempts_data = []
@@ -469,7 +469,7 @@ def get_user_attempts():
 @jwt_required()
 def get_user_test_sessions():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         sessions = TestSession.query.filter_by(user_id=user_id).order_by(TestSession.started_at.desc()).all()
         
         sessions_data = []
@@ -491,7 +491,7 @@ def get_user_test_sessions():
 @jwt_required()
 def get_user_ocr_history():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         ocr_records = OCRTranslation.query.filter_by(user_id=user_id).order_by(OCRTranslation.created_at.desc()).all()
         
         ocr_data = []
