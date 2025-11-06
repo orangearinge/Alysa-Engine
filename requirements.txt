@@ -1,5 +1,12 @@
 genai
 flask==2.3.3
+flask-sqlalchemy==3.0.5
+flask-migrate==4.0.5
+flask-jwt-extended==4.5.3
+flask-cors==4.0.0
+pymysql==1.1.0
+cryptography==41.0.7
+bcrypt==4.1.2
 language-tool-python==3.2.4
 sentence-transformers==2.2.2
 torch==2.0.1
