@@ -1,13 +1,4 @@
-import base64Web Services
-Mobile UI
-Bu intan
-Komputasi Cloud
-Data Warahouse
-Pengujian Perangkat Lunak
-Tugas Pak Fikri
-Pipeline Citra
-Preparation Dataset
-Try TTS
+import base64Web
 import importlib.util
 import io
 import json
