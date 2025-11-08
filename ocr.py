@@ -8,42 +8,41 @@ import re
 import os
 import ssl
 import certifi
+
+# KONFIGURASI API & SSL
 ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
 
-# -----------------------------------
-# KONFIGURASI API GEMINI
-# -----------------------------------
 GEMINI_API_KEY = "AIzaSyAP-1OSgvqEJKOmIJQzR2uPnpa0eupPxg8"
-os.environ['GEMINI_API_KEY'] = GEMINI_API_KEY
+os.environ["GEMINI_API_KEY"] = GEMINI_API_KEY
 
 client = genai.Client()
-
-# -----------------------------------
-# SETUP OCR
-# -----------------------------------
 reader = easyocr.Reader(['id', 'en'])
 
-# -----------------------------------
-# FUNGSI UTAMA
-# -----------------------------------
 
-def process_image(image):
+# 🧩 PIPELINE FUNCTIONS
+def preprocess_image(image: Image.Image):
+    """Validasi dan konversi gambar ke format OCR-ready (RGB numpy array)."""
     if image is None:
-        return {"error": "No image uploaded"}
-
+        raise ValueError("No image uploaded")
     try:
         image = image.convert("RGB")
+        return np.array(image)
     except Exception:
-        return {"error": "Invalid image file"}
+        raise ValueError("Invalid image file")
 
-    # OCR
-    ocr_result = reader.readtext(np.array(image), detail=0)
-    ocr_text = " ".join(ocr_result).strip()
-    if not ocr_text:
-        return {"error": "No text detected in image"}
 
-    # Prompt ke Gemini
-    prompt = f"""
+def extract_text(image_array: np.ndarray):
+    """Ambil teks dari gambar menggunakan EasyOCR."""
+    ocr_result = reader.readtext(image_array, detail=0)
+    text = " ".join(ocr_result).strip()
+    if not text:
+        raise ValueError("No text detected in image")
+    return text
+
+
+def build_prompt(ocr_text: str):
+    """Buat prompt untuk dikirim ke Gemini."""
+    return f"""
 You are a linguistics assistant.
 You will receive text that may be in Indonesian or English.
 
@@ -72,28 +71,44 @@ Return only valid JSON in this exact format:
 Text: {ocr_text}
 """
 
+
+def query_gemini(prompt: str):
+    """Kirim prompt ke Gemini dan kembalikan hasil teks mentah."""
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt
+    )
+    return response.text.strip()
+
+
+def parse_model_output(text: str):
+    """Bersihkan dan parsing hasil output dari Gemini menjadi JSON."""
+    # Bersihkan dari wrapper Markdown
+    if text.startswith("```"):
+        text = re.sub(r"^```(json)?", "", text)
+        text = text.replace("```", "").strip()
     try:
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt
-        )
-        text = response.text.strip()
-
-        # Bersihkan potensi ```json ... ```
-        if text.startswith("```"):
-            text = text.strip("`").replace("json", "", 1).strip()
-
-        result = json.loads(text)
+        return json.loads(text)
     except json.JSONDecodeError:
-        result = {"raw_output": text, "error": "Invalid JSON format returned by model"}
+        return {"raw_output": text, "error": "Invalid JSON format returned by model"}
+
+
+
+# MAIN PROCESS FUNCTION
+def process_image(image):
+    try:
+        img_array = preprocess_image(image)
+        ocr_text = extract_text(img_array)
+        prompt = build_prompt(ocr_text)
+        raw_response = query_gemini(prompt)
+        result = parse_model_output(raw_response)
+        return result
     except Exception as e:
-        result = {"error": str(e)}
+        return {"error": str(e)}
 
-    return result
 
-# -----------------------------------
+
 # GRADIO INTERFACE
-# -----------------------------------
 iface = gr.Interface(
     fn=process_image,
     inputs=gr.Image(type="pil", label="Upload Image"),
