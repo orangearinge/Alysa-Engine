@@ -3,8 +3,7 @@ import json
 import os
 
 # Import AI models
-from datetime import datetime, timedelta
-
+from datetime import datetime
 import bcrypt   
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -42,7 +41,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = Config.SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = Config.SQLALCHEMY_TRACK_MODIFICATIONS
 app.config['JWT_SECRET_KEY'] = Config.SECRET_KEY
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = Config.JWT_ACCESS_TOKEN_EXPIRES
 
 # Initialize extensions
 db = SQLAlchemy(app)
