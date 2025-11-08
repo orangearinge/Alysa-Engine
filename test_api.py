@@ -14,6 +14,11 @@ class APITester:
     def __init__(self):
         self.access_token = None
         self.session = requests.Session()
+        # Set default headers
+        self.session.headers.update({
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        })
     
     def print_response(self, response, endpoint_name):
         """Print formatted response"""
@@ -82,7 +87,11 @@ class APITester:
     
     def test_start_test(self):
         """Test start test session"""
-        response = self.session.post(f"{BASE_URL}/test/start")
+        data = {
+            "section": "writing",
+            "task_types": ["independent", "integrated"]
+        }
+        response = self.session.post(f"{BASE_URL}/test/start", json=data)
         self.print_response(response, "Start Test Session")
         
         if response.status_code == 200:
@@ -90,17 +99,29 @@ class APITester:
         return None
     
     def test_submit_test(self, session_id):
-        """Test submit test answers"""
+        """Test submit test answers using new task-based structure"""
         data = {
             "session_id": session_id,
-            "answers": [
+            "task_answers": [
                 {
-                    "question_id": 1,
-                    "answer": "I prefer to study alone because it allows me to focus better and learn at my own pace. When studying alone, I can choose the environment and methods that work best for me."
+                    "task_type": "independent",
+                    "section": "writing",
+                    "answers": [
+                        {
+                            "question_id": 1,
+                            "answer": "I prefer to study alone because it allows me to focus better and learn at my own pace. When studying alone, I can choose the environment and methods that work best for me."
+                        }
+                    ]
                 },
                 {
-                    "question_id": 2,
-                    "answer": "I think students should work part-time while studying because it helps them gain practical experience and develop time management skills. However, they should balance work and studies carefully."
+                    "task_type": "integrated",
+                    "section": "writing",
+                    "answers": [
+                        {
+                            "question_id": 3,
+                            "answer": "The reading passage discusses the benefits of renewable energy sources, including environmental protection and economic advantages. The lecture supports these points by providing specific examples of successful renewable energy implementations in various countries."
+                        }
+                    ]
                 }
             ]
         }

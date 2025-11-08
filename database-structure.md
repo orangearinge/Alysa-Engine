@@ -1,8 +1,10 @@
-**Struktur Database Sistem Pembelajaran Bahasa Inggris (TOEFL iBT) — Versi dengan Fitur OCR & Tanpa Lessons Table**
+---
+
+## **Struktur Database Sistem Pembelajaran Bahasa Inggris (TOEFL iBT) — Versi dengan Learning, Test, dan Task-based Feedback**
 
 ---
 
-### 1. **users**
+### 1. *users*
 
 Menyimpan data akun pengguna.
 
@@ -14,47 +16,97 @@ Menyimpan data akun pengguna.
 
 ---
 
-### 2. **user_attempts**
+### 2. *learning_questions*
 
-Mencatat setiap latihan yang dilakukan user (speaking atau writing).
+Bank soal untuk **fitur pembelajaran (Learning Mode)**, dikelompokkan berdasarkan skill dan level.
 
 * id — integer, primary key, auto increment
-* user_id — integer, foreign key ke tabel users
-* question_title — text, judul atau nama soal (karena soal di-hardcode)
+* skill_type — text, `'speaking'` atau `'writing'`
+* level — integer, level kesulitan (1 = beginner, 2 = intermediate, dst.)
+* prompt — text, instruksi atau teks soal
+* reference_answer — text, contoh jawaban ideal (opsional)
+* keywords — text, daftar kata kunci penting (format JSON)
+* created_at — datetime, waktu pembuatan soal
+
+---
+
+### 3. *test_questions*
+
+Bank soal untuk **simulation test (TOEFL-like)**, mencakup berbagai task_type.
+
+* id — integer, primary key, auto increment
+* section — text, `'speaking'` atau `'writing'`
+* task_type — text, jenis tugas: `'independent'`, `'integrated'`, `'describe'`, `'summarize'`, dll.
+* prompt — text, teks instruksi atau soal
+* reference_answer — text, contoh jawaban ideal (opsional)
+* keywords — text, daftar kata kunci penting (format JSON)
+* created_at — datetime, waktu pembuatan soal
+
+---
+
+### 4. *user_attempts*
+
+Mencatat setiap **latihan (learning)** yang dilakukan user.
+
+* id — integer, primary key, auto increment
+* user_id — integer, foreign key ke tabel *users*
+* learning_question_id — integer, foreign key ke tabel *learning_questions*
 * user_input — text, jawaban user
-* ai_feedback — text, hasil evaluasi model AI (grammar, struktur, dsb.)
+* ai_feedback — text, hasil evaluasi LLM (grammar, struktur, dsb.)
 * score — float, nilai hasil evaluasi
 * created_at — datetime, waktu pengerjaan
 
 ---
 
-### 3. **test_sessions**
+### 5. *test_sessions*
 
-Mewakili sesi simulasi TOEFL iBT penuh untuk tiap user.
+Mewakili satu sesi **simulasi TOEFL iBT penuh** yang diikuti user.
 
 * id — integer, primary key, auto increment
-* user_id — integer, foreign key ke tabel users
+* user_id — integer, foreign key ke tabel *users*
 * total_score — float, total nilai keseluruhan sesi
-* ai_feedback — text, ringkasan umpan balik keseluruhan dari AI
+* ai_feedback — text, ringkasan umpan balik keseluruhan dari LLM
 * started_at — datetime, waktu mulai test
 * finished_at — datetime, waktu selesai test
 
 ---
 
-### 4. **ocr_translations**
+### 6. *test_answers*
 
-Menyimpan hasil proses OCR dan hasil terjemahan lengkapnya (gabungan teks terjemahan dan penjelasan).
+Menyimpan jawaban user **berdasarkan task_type**, bukan per soal.
+Setiap baris mewakili satu jenis tugas (*Independent*, *Integrated*, dll.) di satu sesi test.
 
 * id — integer, primary key, auto increment
-* user_id — integer, foreign key ke tabel users
+* test_session_id — integer, foreign key ke tabel *test_sessions*
+* section — text, `'speaking'` atau `'writing'`
+* task_type — text, jenis tugas: `'independent'`, `'integrated'`, `'describe'`, `'summarize'`, dll.
+* combined_question_ids — text, daftar ID soal yang termasuk task ini (format JSON, contoh: `[1,2,3]`)
+* user_inputs — text, semua jawaban user per soal dalam format JSON (contoh: `[{"q_id":1,"answer":"..."},{"q_id":2,"answer":"..."}]`)
+* ai_feedback — text, hasil evaluasi LLM untuk seluruh task_type
+* score — float, skor rata-rata untuk task_type ini
+* created_at — datetime, waktu pengerjaan
+
+---
+
+### 7. *ocr_translations*
+
+Menyimpan hasil proses OCR dan terjemahan lengkap (gabungan teks terjemahan dan penjelasan grammar/vocabulary).
+
+* id — integer, primary key, auto increment
+* user_id — integer, foreign key ke tabel *users*
 * original_text — text, hasil teks dari gambar (bahasa Indonesia)
 * translated_and_explained — text, hasil gabungan terjemahan ke Inggris + penjelasan grammar/vocabulary
 * created_at — datetime, waktu pemrosesan OCR
 
 ---
 
-Struktur ini sudah siap dipakai untuk versi awal:
+### 📊 **Relasi Antar Tabel**
 
-* Soal disediakan langsung (hardcoded) di kode.
-* Semua input dan hasil analisis AI tersimpan di `user_attempts` atau `test_sessions`.
-* Fitur OCR menyimpan hasil teks tanpa file gambar.
+```
+users
+ ├── user_attempts → learning_questions
+ ├── test_sessions
+ │     └── test_answers (per task_type)
+ │           └── test_questions (via combined_question_ids)
+ └── ocr_translations
+```

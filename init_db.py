@@ -27,12 +27,34 @@ class User(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+class LearningQuestion(db.Model):
+    __tablename__ = 'learning_questions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    skill_type = db.Column(db.Text, nullable=False)  # 'speaking' or 'writing'
+    level = db.Column(db.Integer, nullable=False)  # 1=beginner, 2=intermediate, etc.
+    prompt = db.Column(db.Text, nullable=False)
+    reference_answer = db.Column(db.Text)  # optional
+    keywords = db.Column(db.Text)  # JSON format
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class TestQuestion(db.Model):
+    __tablename__ = 'test_questions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    section = db.Column(db.Text, nullable=False)  # 'speaking' or 'writing'
+    task_type = db.Column(db.Text, nullable=False)  # 'independent', 'integrated', etc.
+    prompt = db.Column(db.Text, nullable=False)
+    reference_answer = db.Column(db.Text)  # optional
+    keywords = db.Column(db.Text)  # JSON format
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 class UserAttempt(db.Model):
     __tablename__ = 'user_attempts'
     
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    question_title = db.Column(db.Text, nullable=False)
+    learning_question_id = db.Column(db.Integer, db.ForeignKey('learning_questions.id'), nullable=False)
     user_input = db.Column(db.Text, nullable=False)
     ai_feedback = db.Column(db.Text, nullable=False)
     score = db.Column(db.Float, nullable=False)
@@ -47,6 +69,19 @@ class TestSession(db.Model):
     ai_feedback = db.Column(db.Text, nullable=False)
     started_at = db.Column(db.DateTime, default=datetime.utcnow)
     finished_at = db.Column(db.DateTime)
+
+class TestAnswer(db.Model):
+    __tablename__ = 'test_answers'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    test_session_id = db.Column(db.Integer, db.ForeignKey('test_sessions.id'), nullable=False)
+    section = db.Column(db.Text, nullable=False)  # 'speaking' or 'writing'
+    task_type = db.Column(db.Text, nullable=False)  # 'independent', 'integrated', etc.
+    combined_question_ids = db.Column(db.Text, nullable=False)  # JSON format: [1,2,3]
+    user_inputs = db.Column(db.Text, nullable=False)  # JSON format: [{"q_id":1,"answer":"..."}]
+    ai_feedback = db.Column(db.Text, nullable=False)
+    score = db.Column(db.Float, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class OCRTranslation(db.Model):
     __tablename__ = 'ocr_translations'
@@ -109,6 +144,84 @@ def create_tables():
     
     return True
 
+def populate_sample_data():
+    """Populate tables with sample learning and test questions"""
+    try:
+        with app.app_context():
+            # Check if data already exists
+            if LearningQuestion.query.first() or TestQuestion.query.first():
+                print("Sample data already exists, skipping population")
+                return True
+            
+            # Sample Learning Questions
+            learning_questions = [
+                {
+                    "skill_type": "writing",
+                    "level": 1,
+                    "prompt": "Describe your hometown and explain what makes it special. Include details about the culture, food, and people.",
+                    "reference_answer": "My hometown is a small city with rich cultural heritage...",
+                    "keywords": '["hometown", "culture", "food", "people", "special"]'
+                },
+                {
+                    "skill_type": "writing", 
+                    "level": 2,
+                    "prompt": "Do you think technology has improved education? Give specific examples and explain your reasoning.",
+                    "reference_answer": "Technology has significantly improved education through various means...",
+                    "keywords": '["technology", "education", "examples", "reasoning", "improvement"]'
+                },
+                {
+                    "skill_type": "writing",
+                    "level": 2,
+                    "prompt": "What can individuals do to protect the environment? Discuss at least three specific actions.",
+                    "reference_answer": "Individuals can protect the environment through recycling, reducing energy consumption...",
+                    "keywords": '["environment", "protection", "individuals", "actions", "sustainability"]'
+                }
+            ]
+            
+            # Sample Test Questions
+            test_questions = [
+                {
+                    "section": "writing",
+                    "task_type": "independent",
+                    "prompt": "Some students prefer to study alone, while others prefer group study. Which do you prefer and why?",
+                    "reference_answer": "I prefer studying alone because it allows me to focus better...",
+                    "keywords": '["study", "alone", "group", "preference", "focus"]'
+                },
+                {
+                    "section": "writing",
+                    "task_type": "independent", 
+                    "prompt": "Do you think students should work part-time while studying? Explain your opinion with examples.",
+                    "reference_answer": "Students should work part-time as it provides valuable experience...",
+                    "keywords": '["students", "work", "part-time", "studying", "experience"]'
+                },
+                {
+                    "section": "writing",
+                    "task_type": "integrated",
+                    "prompt": "Summarize the main points from the reading passage and explain how the lecture supports or contradicts these points.",
+                    "reference_answer": "The reading passage outlines several benefits of renewable energy...",
+                    "keywords": '["renewable energy", "benefits", "lecture", "reading", "summarize"]'
+                }
+            ]
+            
+            # Insert Learning Questions
+            for lq_data in learning_questions:
+                lq = LearningQuestion(**lq_data)
+                db.session.add(lq)
+            
+            # Insert Test Questions  
+            for tq_data in test_questions:
+                tq = TestQuestion(**tq_data)
+                db.session.add(tq)
+            
+            db.session.commit()
+            print(f"Inserted {len(learning_questions)} learning questions and {len(test_questions)} test questions")
+            
+    except Exception as e:
+        print(f"Error populating sample data: {e}")
+        return False
+    
+    return True
+
 def main():
     """Main initialization function"""
     print("Initializing TOEFL Learning System Database...")
@@ -121,6 +234,11 @@ def main():
     # Step 2: Create tables
     if not create_tables():
         print("Failed to create tables. Exiting.")
+        return
+    
+    # Step 3: Populate sample data
+    if not populate_sample_data():
+        print("Failed to populate sample data. Exiting.")
         return
     
     print("\n✅ Database initialization completed successfully!")
