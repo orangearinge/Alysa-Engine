@@ -57,7 +57,6 @@ Your task:
 Return only valid JSON in this exact format:
 
 {{
-  "detected_language": "<string>",
   "translation": "<string>",
   "sentence_analysis": [
     {{
