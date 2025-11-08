@@ -2,6 +2,7 @@
 from google import genai
 import json
 import os
+from config import Config
 
 def ai_toefl_feedback(essay_text, mode="learning"):
     """
@@ -20,7 +21,6 @@ def ai_toefl_feedback(essay_text, mode="learning"):
     """
 
     try:
-        os.environ['GEMINI_API_KEY'] = 'AIzaSyCTTSl772mg76ExEmZ5DZeN-w1a-S5XD5g'
         client = genai.Client()
 
         if mode == "test":

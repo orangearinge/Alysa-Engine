@@ -5,15 +5,12 @@ from google import genai
 import json
 import gradio as gr
 import re
-import os
 import ssl
 import certifi
+from config import Config
 
 # KONFIGURASI API & SSL
 ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
-
-GEMINI_API_KEY = "AIzaSyAP-1OSgvqEJKOmIJQzR2uPnpa0eupPxg8"
-os.environ["GEMINI_API_KEY"] = GEMINI_API_KEY
 
 client = genai.Client()
 reader = easyocr.Reader(['id', 'en'])

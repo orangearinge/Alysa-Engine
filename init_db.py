@@ -4,16 +4,20 @@ Database initialization script for TOEFL Learning System
 Run this script to create the database and tables
 """
 
+from urllib.parse import urlparse
 import pymysql
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from config import Config
+
+# Load environment variables
 
 # Create a minimal Flask app for database initialization
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'mysql+pymysql://root:root@localhost:8889/alysa')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = Config.SQLALCHEMY_DATABASE_URI
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = Config.SQLALCHEMY_TRACK_MODIFICATIONS
 
 db = SQLAlchemy(app)
 
@@ -96,25 +100,22 @@ def create_database():
     """Create the database if it doesn't exist"""
     try:
         # Database connection parameters
-        host = os.getenv('DB_HOST', 'localhost')
-        port = int(os.getenv('DB_PORT', '8889'))
-        user = os.getenv('DB_USER', 'root')
-        password = os.getenv('DB_PASSWORD', 'root')
-        database_name = os.getenv('DB_NAME', 'alysa')
+        uri = Config.SQLALCHEMY_DATABASE_URI
+        parsed = urlparse(uri)
         
         # Connect to MySQL server (without specifying database)
         connection = pymysql.connect(
-            host=host,
-            port=port,
-            user=user,
-            password=password,
+            host=parsed.hostname,
+            port=parsed.port,
+            user=parsed.username,
+            password=parsed.password,
             charset='utf8mb4'
         )
         
         with connection.cursor() as cursor:
             # Create database if it doesn't exist
-            cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{database_name}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-            print(f"Database '{database_name}' created or already exists")
+            cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{parsed.path[1:]}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+            print(f"Database '{parsed.path[1:]}' created or already exists")
         
         connection.commit()
         connection.close()

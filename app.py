@@ -14,9 +14,13 @@ from flask_jwt_extended import (
     get_jwt_identity,
     jwt_required,
 )
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from PIL import Image
+from dotenv import load_dotenv
+from config import Config
+
+# Load environment variables
+load_dotenv()
 
 # Import feedback-model-alysa.py
 spec_alysa = importlib.util.spec_from_file_location("feedback_model_alysa", "feedback-model-alysa.py")
@@ -35,14 +39,13 @@ from ocr import process_image
 app = Flask(__name__)
 
 # Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'mysql+pymysql://root:root@localhost:8889/alysa')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your-secret-key-change-this')
+app.config['SQLALCHEMY_DATABASE_URI'] = Config.SQLALCHEMY_DATABASE_URI
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = Config.SQLALCHEMY_TRACK_MODIFICATIONS
+app.config['JWT_SECRET_KEY'] = Config.SECRET_KEY
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 
 # Initialize extensions
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 jwt = JWTManager(app)
 CORS(app)
 
