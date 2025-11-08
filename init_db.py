@@ -145,7 +145,7 @@ def create_tables():
     return True
 
 def populate_sample_data():
-    """Populate tables with sample learning and test questions"""
+    """Populate tables with sample learning questions and TOEFL iBT test questions (6 tasks)"""
     try:
         with app.app_context():
             # Check if data already exists
@@ -178,28 +178,55 @@ def populate_sample_data():
                 }
             ]
             
-            # Sample Test Questions
+            # TOEFL iBT Test Questions - 6 Tasks (4 Speaking + 2 Writing)
             test_questions = [
+                # Speaking Task 1 - Independent
                 {
-                    "section": "writing",
+                    "section": "speaking",
                     "task_type": "independent",
-                    "prompt": "Some students prefer to study alone, while others prefer group study. Which do you prefer and why?",
-                    "reference_answer": "I prefer studying alone because it allows me to focus better...",
-                    "keywords": '["study", "alone", "group", "preference", "focus"]'
+                    "prompt": "Some people prefer to live in a small town, while others prefer to live in a big city. Which do you prefer and why? Use specific reasons and examples to support your answer.",
+                    "reference_answer": "I prefer living in a big city because of the opportunities and convenience it offers...",
+                    "keywords": '["city", "town", "preference", "opportunities", "lifestyle"]'
                 },
+                # Speaking Task 2 - Integrated (Campus Situation)
                 {
-                    "section": "writing",
-                    "task_type": "independent", 
-                    "prompt": "Do you think students should work part-time while studying? Explain your opinion with examples.",
-                    "reference_answer": "Students should work part-time as it provides valuable experience...",
-                    "keywords": '["students", "work", "part-time", "studying", "experience"]'
+                    "section": "speaking",
+                    "task_type": "integrated",
+                    "prompt": "The university is planning to build a new student recreation center. Read the announcement and listen to the conversation between two students. Then explain the woman's opinion about the plan and the reasons she gives.",
+                    "reference_answer": "The woman supports the new recreation center because it will provide better facilities for students...",
+                    "keywords": '["recreation center", "university", "student opinion", "facilities", "campus"]'
                 },
+                # Speaking Task 3 - Integrated (Academic Course)
+                {
+                    "section": "speaking",
+                    "task_type": "integrated",
+                    "prompt": "Read the passage about behavioral economics and listen to the professor's lecture. Explain how the example used by the professor illustrates the concept described in the reading.",
+                    "reference_answer": "The professor uses the example of consumer choice to demonstrate how behavioral economics differs from traditional economic theory...",
+                    "keywords": '["behavioral economics", "professor", "example", "consumer choice", "theory"]'
+                },
+                # Speaking Task 4 - Integrated (Academic Lecture)
+                {
+                    "section": "speaking",
+                    "task_type": "integrated",
+                    "prompt": "Listen to part of a lecture in a biology class about animal adaptation. Using points and examples from the lecture, explain how animals adapt to extreme environments.",
+                    "reference_answer": "The professor explains that animals adapt to extreme environments through various mechanisms such as physical changes and behavioral modifications...",
+                    "keywords": '["animal adaptation", "extreme environments", "biology", "mechanisms", "survival"]'
+                },
+                # Writing Task 1 - Integrated
                 {
                     "section": "writing",
                     "task_type": "integrated",
-                    "prompt": "Summarize the main points from the reading passage and explain how the lecture supports or contradicts these points.",
-                    "reference_answer": "The reading passage outlines several benefits of renewable energy...",
-                    "keywords": '["renewable energy", "benefits", "lecture", "reading", "summarize"]'
+                    "prompt": "Summarize the points made in the lecture, being sure to explain how they cast doubt on the specific points made in the reading passage about the benefits of working from home.",
+                    "reference_answer": "The reading passage argues that working from home provides numerous benefits including increased productivity and better work-life balance. However, the lecture challenges these claims...",
+                    "keywords": '["working from home", "benefits", "productivity", "work-life balance", "challenges"]'
+                },
+                # Writing Task 2 - Independent
+                {
+                    "section": "writing",
+                    "task_type": "independent",
+                    "prompt": "Do you agree or disagree with the following statement? It is more important for students to understand ideas and concepts than it is for them to learn facts. Use specific reasons and examples to support your answer.",
+                    "reference_answer": "I agree that understanding ideas and concepts is more important than memorizing facts. In today's information age, students need critical thinking skills...",
+                    "keywords": '["education", "concepts", "facts", "critical thinking", "learning"]'
                 }
             ]
             
@@ -214,7 +241,11 @@ def populate_sample_data():
                 db.session.add(tq)
             
             db.session.commit()
-            print(f"Inserted {len(learning_questions)} learning questions and {len(test_questions)} test questions")
+            print(f"Inserted {len(learning_questions)} learning questions and {len(test_questions)} TOEFL iBT test questions")
+            print("TOEFL iBT Test Structure:")
+            print("  - 4 Speaking Tasks (1 Independent + 3 Integrated)")
+            print("  - 2 Writing Tasks (1 Integrated + 1 Independent)")
+            print("  - Total: 6 individual tasks for complete evaluation")
             
     except Exception as e:
         print(f"Error populating sample data: {e}")

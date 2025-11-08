@@ -1,151 +1,217 @@
+# feedback-model-gemini.py
 from google import genai
 import json
 import os
 
-def ai_toefl_feedback(essay_text):
+def ai_toefl_feedback(essay_text, mode="learning"):
     """
-    AI TOEFL Feedback Generator using Gemini - Fully Dynamic Response
+    English evaluator for mobile app with separate modes for learning and testing.
+    
+    Args:
+        essay_text (str): The text to evaluate
+        mode (str): Either "learning" or "test" to determine evaluation style
+                   - "learning": Friendly educational feedback with corrections
+                   - "test": Strict TOEFL iBT evaluation (0-5 scale, objective feedback)
+    
+    Returns:
+        dict: Evaluation results in format appropriate for the mode
+              Learning mode: {status, title, feedback, corrected_text}
+              Test mode: {score, feedback}
     """
-    try:
-        # The client gets the API key from the environment variable `GEMINI_API_KEY`.
-        os.environ['GEMINI_API_KEY'] = 'AIzaSyCTTSl772mg76ExEmZ5DZeN-w1a-S5XD5g'
-        
-        client = genai.Client()
-        
-        # Create comprehensive prompt for dynamic TOEFL feedback
-        prompt = f"""
-You are an expert TOEFL iBT writing evaluator. Analyze the following essay and provide detailed, dynamic feedback.
 
-Essay to analyze:
+    try:
+        os.environ['GEMINI_API_KEY'] = 'AIzaSyCTTSl772mg76ExEmZ5DZeN-w1a-S5XD5g'
+        client = genai.Client()
+
+        if mode == "test":
+            prompt = f"""
+You are an official TOEFL iBT test evaluation assistant for SPEAKING and WRITING sections.
+
+Your job is to:
+- Evaluate individual TOEFL iBT task responses (this is ONE task out of 6 total)
+- Score the performance strictly using TOEFL iBT scoring rubrics (0–5 scale)
+- Provide concise, objective evaluator-style feedback
+- Be stateless - evaluate ONLY this specific task response
+
+Focus on:
+- Grammar accuracy and language use
+- Idea development and content relevance
+- Coherence and organization
+- Lexical range and vocabulary appropriateness
+- Speaking tasks: fluency, clarity, pronunciation (evaluate as if spoken)
+- Writing tasks: cohesion, structure, clarity, academic development
+
+IMPORTANT RULES:
+- This is a FORMAL TEST EVALUATION, NOT A LEARNING SESSION
+- Do NOT rewrite or correct the user's answer
+- Do NOT give step-by-step teaching or suggestions for improvement
+- Do NOT be friendly, encouraging, or overly positive
+- Stay neutral, objective, and evaluator-like in tone
+- Output must be based ONLY on the provided text
+- Do NOT reference other tasks or overall performance
+
+Evaluate this individual task response:
 "{essay_text}"
 
-Please provide your analysis in EXACTLY this JSON format (no additional text, just valid JSON):
-
+OUTPUT FORMAT (JSON only, no other text):
 {{
-    "original": "{essay_text}",
-    "corrected": "provide a grammatically corrected version of the entire text",
-    "grammar_errors": count_of_grammar_errors_found,
-    "avg_coherence": coherence_score_between_0_and_1_as_decimal,
-    "score": overall_toefl_score_between_0_and_5_as_decimal,
-    "feedback": [
-        "provide 2-4 specific feedback messages about the writing",
-        "focus on grammar, coherence, vocabulary, and structure",
-        "make each message actionable and specific to this text"
-    ],
-    "detailed_corrections": [
-        {{
-            "error_text": "exact_incorrect_phrase_from_original",
-            "suggestion": "corrected_version",
-            "message": "explanation_of_the_grammar_rule_or_issue"
-        }}
-    ]
+  "score": <integer 0-5>,
+  "feedback": [
+      "Objective assessment of grammar and language use",
+      "Evaluation of content development and relevance", 
+      "Assessment of organization and coherence",
+      "Comments on vocabulary and lexical range"
+  ]
 }}
 
-IMPORTANT INSTRUCTIONS:
-1. Analyze the actual content dynamically - don't use generic responses
-2. Count real grammar errors you find in the text
-3. Calculate coherence based on logical flow and connections between sentences
-4. Provide specific corrections for actual errors found
-5. Give a realistic TOEFL score (0-5) based on grammar, coherence, vocabulary, and task achievement
-6. Make feedback specific to this particular essay's strengths and weaknesses
-7. Return ONLY valid JSON, no extra text before or after
-8. Ensure all string values are properly escaped for JSON
+TOEFL iBT Scoring Rubric:
+5 = Excellent: Well-developed, clear, effective communication, minimal errors
+4 = Good: Generally well-developed, clear, some minor issues but solid overall
+3 = Fair: Somewhat developed, generally understandable, noticeable issues
+2 = Limited: Insufficient development, unclear communication, frequent errors
+1 = Weak: Very limited development, difficult to understand, serious errors
+0 = Off-topic: No response, completely off-topic, or unintelligible
+
+Provide ONLY the JSON response.
+"""
+        else:  # learning mode
+            prompt = f"""
+You are an English writing evaluator for a mobile learning app.
+Your task is to evaluate VERY SHORT English sentences from beginner and intermediate learners.
+
+Analyze the student's sentence below:
+"{essay_text}"
+
+Return feedback ONLY in this JSON format, nothing else:
+
+{{
+  "status": "correct_or_incorrect",
+  "title": "short_title_with_emoji",
+  "feedback": "one short friendly English sentence + Indonesian translation",
+  "corrected_text": "the corrected sentence or the same sentence if correct"
+}}
+
+Rules:
+1. If the sentence is correct:
+   - status: "correct"
+   - title: "Benar 👍"
+   - feedback: short positive note + Indonesian version
+   - corrected_text: original sentence
+
+2. If it has a small mistake:
+   - status: "almost"
+   - title: "Kurang Tepat 🥹"
+   - feedback: short improvement note + Indonesian version
+   - corrected_text: corrected version
+
+3. If it's wrong:
+   - status: "incorrect"
+   - title: "Perlu Perbaikan ❗"
+   - feedback: short explanation + Indonesian version
+   - corrected_text: corrected version
+
+4. Keep feedback VERY SHORT, suitable for a mobile UI bottom sheet.
+5. Output only valid JSON.
 """
 
-        # Generate content using Gemini
         response = client.models.generate_content(
             model="gemini-2.0-flash",
             contents=prompt
         )
-        
-        # Get the response text
-        response_text = response.text.strip()
-        
-        # Clean up response to extract JSON
-        if "```json" in response_text:
-            json_start = response_text.find("```json") + 7
-            json_end = response_text.find("```", json_start)
-            json_text = response_text[json_start:json_end].strip()
-        elif "{" in response_text and "}" in response_text:
-            json_start = response_text.find("{")
-            json_end = response_text.rfind("}") + 1
-            json_text = response_text[json_start:json_end]
-        else:
-            json_text = response_text
-        
-        # Parse JSON response
-        try:
-            result = json.loads(json_text)
-            
-            # Ensure required fields exist and have correct types
-            if not isinstance(result.get('grammar_errors'), (int, float)):
-                result['grammar_errors'] = 0
-            if not isinstance(result.get('avg_coherence'), (int, float)):
-                result['avg_coherence'] = 0.5
-            if not isinstance(result.get('score'), (int, float)):
-                result['score'] = 3.0
-            if not isinstance(result.get('feedback'), list):
-                result['feedback'] = ["Analysis completed using Gemini AI."]
-            if not isinstance(result.get('detailed_corrections'), list):
-                result['detailed_corrections'] = []
-            
-            # Ensure values are within valid ranges
-            result['grammar_errors'] = max(0, int(result['grammar_errors']))
-            result['avg_coherence'] = max(0.0, min(1.0, float(result['avg_coherence'])))
-            result['score'] = max(0.0, min(5.0, float(result['score'])))
-            
-            # Ensure original and corrected text exist
-            if not result.get('original'):
-                result['original'] = essay_text.strip()
-            if not result.get('corrected'):
-                result['corrected'] = essay_text.strip()
-            
-            return result
-            
-        except json.JSONDecodeError as e:
-            # If JSON parsing fails, return error with Gemini's raw response
-            return {
-                "original": essay_text.strip(),
-                "corrected": essay_text.strip(),
-                "grammar_errors": 0,
-                "avg_coherence": 0.0,
-                "score": 0.0,
-                "feedback": [
-                    "❌ Gemini Response Parsing Error",
-                    f"JSON Parse Error: {str(e)}",
-                    f"Raw Gemini Response: {response_text[:200]}..."
-                ],
-                "detailed_corrections": []
-            }
-            
-    except Exception as e:
-        # Handle API errors
-        return {
-            "original": essay_text.strip(),
-            "corrected": essay_text.strip(),
-            "grammar_errors": 0,
-            "avg_coherence": 0.0,
-            "score": 0.0,
-            "feedback": [
-                "❌ Gemini API Error",
-                f"Error: {str(e)}",
-                "Please check your API key and internet connection."
-            ],
-            "detailed_corrections": []
-        }
 
-# ------------------------------------------------------------
-# Example Test - Only runs when file is executed directly
-# ------------------------------------------------------------
-if __name__ == "__main__":
-    test_essay = """
-    Many students want study abroad because they believe it give them more opportunity. 
-    Studying in another country help them learn different culture and language. 
-    But sometimes they feel lonely and hard to adapt new environment. 
-    In my view, studying abroad is good experience if student prepare well before go.
-    """
+        response_text = response.text.strip()
+
+        # Extract JSON
+        json_start = response_text.find("{")
+        json_end = response_text.rfind("}") + 1
+        json_text = response_text[json_start:json_end]
+
+        result = json.loads(json_text)
+
+        # Safety defaults and validation based on mode
+        if mode == "test":
+            # Validate and ensure proper test mode response format
+            if "score" not in result:
+                result["score"] = 0
+            else:
+                # Ensure score is valid integer between 0-5
+                try:
+                    score = int(result["score"])
+                    result["score"] = max(0, min(5, score))
+                except (ValueError, TypeError):
+                    result["score"] = 0
+            
+            if "feedback" not in result or not isinstance(result["feedback"], list):
+                result["feedback"] = ["Unable to evaluate response due to processing error."]
+            
+            # Ensure feedback is a list of strings
+            if isinstance(result["feedback"], list):
+                result["feedback"] = [str(item) for item in result["feedback"] if item]
+                if not result["feedback"]:
+                    result["feedback"] = ["No specific feedback available."]
+        
+        else:  # learning mode
+            if "corrected_text" not in result:
+                result["corrected_text"] = essay_text
+            if "feedback" not in result:
+                result["feedback"] = "Feedback unavailable."
+            if "status" not in result:
+                result["status"] = "unknown"
+            if "title" not in result:
+                result["title"] = "Info"
+
+        return result
+
+    except json.JSONDecodeError as e:
+        # Handle JSON parsing errors specifically
+        if mode == "test":
+            return {
+                "score": 0,
+                "feedback": ["Response format error: Unable to parse evaluation results."]
+            }
+        else:
+            return {
+                "status": "error",
+                "title": "Error ❗",
+                "feedback": "Unable to process response format.",
+                "corrected_text": essay_text
+            }
     
-    print("Testing Gemini TOEFL Feedback Model (Fully Dynamic)...")
-    result = ai_toefl_feedback(test_essay)
-    print("Result:")
-    print(json.dumps(result, indent=2))
+    except Exception as e:
+        # Handle all other errors
+        error_msg = str(e)[:100]  # Limit error message length
+        if mode == "test":
+            return {
+                "score": 0,
+                "feedback": [f"Processing error: {error_msg}"]
+            }
+        else:  # learning mode
+            return {
+                "status": "error",
+                "title": "Error ❗",
+                "feedback": f"Unable to process: {error_msg}",
+                "corrected_text": essay_text
+            }
+
+
+if __name__ == "__main__":
+    # Test with different types of responses for both modes
+    
+    # Test 1: Learning mode with simple sentence
+    learning_text = "I have an apple"
+    print("=== LEARNING MODE TEST (Simple Sentence) ===")
+    print(json.dumps(ai_toefl_feedback(learning_text, mode="learning"), indent=2))
+    
+    # Test 2: Test mode with TOEFL-style speaking response
+    speaking_text = "I believe that studying abroad is beneficial for students because it exposes them to different cultures and helps them develop independence. When students live in a foreign country, they must adapt to new situations and solve problems on their own."
+    print("\n=== TEST MODE TEST (Speaking Task) ===")
+    print(json.dumps(ai_toefl_feedback(speaking_text, mode="test"), indent=2))
+    
+    # Test 3: Test mode with TOEFL-style writing response
+    writing_text = "In my opinion, technology has significantly improved our daily lives. First, smartphones allow us to communicate instantly with people around the world. Second, the internet provides access to vast amounts of information and educational resources. Finally, medical technology has increased life expectancy and improved treatment options for many diseases. While some argue that technology creates social isolation, I believe the benefits outweigh the drawbacks when used responsibly."
+    print("\n=== TEST MODE TEST (Writing Task) ===")
+    print(json.dumps(ai_toefl_feedback(writing_text, mode="test"), indent=2))
+    
+    # Test 4: Error handling test
+    print("\n=== ERROR HANDLING TEST ===")
+    print(json.dumps(ai_toefl_feedback("", mode="test"), indent=2))

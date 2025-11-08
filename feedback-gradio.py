@@ -1,7 +1,5 @@
 import gradio as gr
 import importlib.util
-import sys
-import os
 
 # Import the Alysa feedback model
 spec_alysa = importlib.util.spec_from_file_location("feedback_model_alysa", "/Users/fadil/repo/ai/capstone/alysa-engine/feedback-model-alysa.py")
