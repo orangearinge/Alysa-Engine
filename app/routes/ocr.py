@@ -1,0 +1,47 @@
+import json
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from PIL import Image
+from app.models.database import db, OCRTranslation
+from app.ai_models.ocr import process_image
+
+ocr_bp = Blueprint('ocr', __name__)
+
+@ocr_bp.route('/api/ocr/translate', methods=['POST'])
+@jwt_required()
+def ocr_translate():
+    try:
+        user_id = int(get_jwt_identity())
+
+        if 'image' not in request.files:
+            return jsonify({'error': 'No image file provided'}), 400
+
+        file = request.files['image']
+        if file.filename == '':
+            return jsonify({'error': 'No image file selected'}), 400
+
+        # Process image
+        image = Image.open(file.stream)
+        result = process_image(image)
+
+        if 'error' in result:
+            return jsonify({'error': result['error']}), 400
+
+        # Save OCR result to database
+        ocr_record = OCRTranslation(
+            user_id=user_id,
+            original_text=result.get('detected_language', '') + ': ' + str(result),
+            translated_and_explained=json.dumps(result)
+        )
+
+        db.session.add(ocr_record)
+        db.session.commit()
+
+        return jsonify({
+            'message': 'OCR translation completed',
+            'result': result,
+            'record_id': ocr_record.id
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

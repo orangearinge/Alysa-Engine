@@ -6,7 +6,6 @@ Run this script to create the database and tables
 
 from urllib.parse import urlparse
 import pymysql
-import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
