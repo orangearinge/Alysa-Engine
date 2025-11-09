@@ -1,8 +1,6 @@
 # feedback-model-gemini.py
 from google import genai
 import json
-import os
-from config import Config
 
 def ai_toefl_feedback(essay_text, mode="learning"):
     """
