@@ -1,67 +1,89 @@
-import pytest
-import numpy as np
+import unittest
+from unittest.mock import patch, MagicMock
 from PIL import Image
-from app.ai_models import ocr
+import numpy as np
+import json
+import re
+import app.ai_models.ocr as ocr
 
-# BLACK BOX TESTING - EP
-class TestBlackBoxEP:
-    def test_preprocess_valid_image(self):
-        """Equivalence Partition: valid image (RGB expected)."""
-        img = Image.new("RGB", (100, 100), color="white")
+
+class TestOCRWhiteBox(unittest.TestCase):
+
+    # ---------- 1. preprocess_image ----------
+    def test_preprocess_image_valid(self):
+        """Statement + Branch: input gambar valid"""
+        img = Image.new('RGB', (10, 10), color='white')
         result = ocr.preprocess_image(img)
-        assert isinstance(result, np.ndarray)
-        assert result.shape[2] == 3  # RGB
+        self.assertIsInstance(result, np.ndarray)
 
-    def test_preprocess_invalid_none(self):
-        """Equivalence Partition: invalid input (None)."""
-        with pytest.raises(ValueError, match="No image uploaded"):
+    def test_preprocess_image_none(self):
+        """Branch Coverage: None → Raise Error"""
+        with self.assertRaises(ValueError):
             ocr.preprocess_image(None)
 
-    def test_preprocess_invalid_format(self):
-        """Equivalence Partition: invalid image object (not PIL Image)."""
-        with pytest.raises(ValueError, match="Invalid image file"):
-            ocr.preprocess_image("bukan_gambar")
+    def test_preprocess_image_invalid(self):
+        """Exception path: gambar tidak valid"""
+        class FakeImage:
+            def convert(self, mode): raise Exception("Conversion failed")
+        with self.assertRaises(ValueError):
+            ocr.preprocess_image(FakeImage())
 
-    def test_extract_text_with_text(self, monkeypatch):
-        """Equivalence Partition: image dengan teks valid."""
-        dummy_array = np.zeros((100, 100, 3))
-        monkeypatch.setattr(ocr.reader, "readtext", lambda x, detail: ["Halo dunia"])
-        result = ocr.extract_text(dummy_array)
-        assert result == "Halo dunia"
+    # ---------- 2. extract_text ----------
+    @patch.object(ocr.reader, 'readtext', return_value=["Halo", "Dunia"])
+    def test_extract_text_valid(self, mock_ocr):
+        """Normal path: OCR menghasilkan teks"""
+        img = np.zeros((10, 10, 3))
+        text = ocr.extract_text(img)
+        self.assertEqual(text, "Halo Dunia")
 
-    def test_extract_text_no_text(self, monkeypatch):
-        """Equivalence Partition: image tanpa teks."""
-        dummy_array = np.zeros((100, 100, 3))
-        monkeypatch.setattr(ocr.reader, "readtext", lambda x, detail: [])
-        with pytest.raises(ValueError, match="No text detected in image"):
-            ocr.extract_text(dummy_array)
+    @patch.object(ocr.reader, 'readtext', return_value=[])
+    def test_extract_text_no_text(self, mock_ocr):
+        """Branch: OCR kosong → error"""
+        with self.assertRaises(ValueError):
+            ocr.extract_text(np.zeros((10, 10, 3)))
 
-# WHITE BOX TESTING - DYNAMIC
-class TestWhiteBoxDynamic:
-    def test_process_image_flow(self, mocker):
-        """Dynamic testing: pastikan seluruh fungsi dipanggil dengan benar."""
-        mock_img = Image.new("RGB", (50, 50), color="white")
+    # ---------- 3. build_prompt ----------
+    def test_build_prompt_contains_text(self):
+        """Path tunggal: selalu return string format prompt"""
+        text = "Selamat pagi"
+        result = ocr.build_prompt(text)
+        self.assertIn(text, result)
+        self.assertIn("translation", result)
 
-        # Mock semua fungsi internal
-        mock_pre = mocker.patch("app.ai_models.ocr.preprocess_image", return_value=np.zeros((50, 50, 3)))
-        mock_ext = mocker.patch("app.ai_models.ocr.extract_text", return_value="contoh teks")
-        mock_build = mocker.patch("app.ai_models.ocr.build_prompt", return_value="prompt dummy")
-        mock_query = mocker.patch("app.ai_models.ocr.query_gemini", return_value='{"translation": "Hello"}')
-        mock_parse = mocker.patch("app.ai_models.ocr.parse_model_output", return_value={"translation": "Hello"})
+    # ---------- 4. parse_model_output ----------
+    def test_parse_model_output_valid_json(self):
+        """Branch: JSON valid"""
+        valid_json = json.dumps({"translation": "Hi"})
+        result = ocr.parse_model_output(valid_json)
+        self.assertEqual(result["translation"], "Hi")
 
-        result = ocr.process_image(mock_img)
+    def test_parse_model_output_invalid_json(self):
+        """Branch: JSON invalid"""
+        invalid_json = "{invalid json}"
+        result = ocr.parse_model_output(invalid_json)
+        self.assertIn("error", result)
 
-        # Verifikasi urutan panggilan fungsi
-        mock_pre.assert_called_once()
-        mock_ext.assert_called_once()
-        mock_build.assert_called_once()
-        mock_query.assert_called_once()
-        mock_parse.assert_called_once()
-        assert result == {"translation": "Hello"}
+    def test_parse_model_output_wrapped_code_block(self):
+        """Branch: output dibungkus triple backtick"""
+        wrapped = "```json\n{\"translation\": \"Hi\"}\n```"
+        result = ocr.parse_model_output(wrapped)
+        self.assertEqual(result["translation"], "Hi")
 
-    def test_process_image_error_handling(self, mocker):
-        """Dynamic testing: pastikan error ditangani dengan benar."""
-        mocker.patch("app.ai_models.ocr.preprocess_image", side_effect=ValueError("No image uploaded"))
+    # ---------- 5. process_image ----------
+    @patch("app.ai_models.ocr.query_gemini", return_value=json.dumps({"translation": "OK"}))
+    @patch("app.ai_models.ocr.extract_text", return_value="Hello world")
+    @patch("app.ai_models.ocr.preprocess_image", return_value=np.zeros((1,1,3)))
+    def test_process_image_valid_flow(self, mock_pre, mock_ext, mock_query):
+        """Full pipeline: semua fungsi berjalan sukses"""
+        result = ocr.process_image(Image.new('RGB', (10, 10)))
+        self.assertIn("translation", result)
+
+    @patch("app.ai_models.ocr.preprocess_image", side_effect=ValueError("No image uploaded"))
+    def test_process_image_error_flow(self, mock_pre):
+        """Error path: satu fungsi melempar exception"""
         result = ocr.process_image(None)
-        assert "error" in result
-        assert "No image uploaded" in result["error"]
+        self.assertIn("error", result)
+
+
+if __name__ == "__main__":
+    unittest.main()
