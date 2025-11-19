@@ -78,7 +78,7 @@ class APITester:
         data = {
             "question_id": 1,
             "answer": "My hometown is Jakarta, the capital city of Indonesia. It is a vibrant metropolis with rich culture and delicious food. The people are friendly and welcoming to visitors.",
-            "model": "gemini"
+            "model": "alysa"
         }
         
         response = self.session.post(f"{BASE_URL}/learning/submit", json=data)

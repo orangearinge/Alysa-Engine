@@ -11,7 +11,7 @@ Sistem pembelajaran bahasa Inggris dengan fokus pada Speaking & Writing untuk TO
 - Riwayat latihan dan progress tracking
 
 ### 📝 Mode Test Simulation
-- Simulasi test TOEFL iBT lengkap (10 soal)
+- Simulasi test TOEFL iBT
 - Timer countdown untuk pengalaman test yang realistis
 - Scoring komprehensif dengan feedback detail
 - Laporan hasil test dengan saran improvement
@@ -22,7 +22,16 @@ Sistem pembelajaran bahasa Inggris dengan fokus pada Speaking & Writing untuk TO
 - Terjemahan ke bahasa Inggris dengan penjelasan grammar
 - Analisis vocabulary dan struktur kalimat
 
-## Teknologi yang Digunakan
+### 🔐 Admin Dashboard
+- **URL**: `/admin/login`
+- **Authentication**: Simple Admin Auth (Username/Password dari `.env`)
+- **Fitur**:
+  - CRUD (Create, Read, Update, Delete) untuk Learning Questions
+  - CRUD untuk Test Questions
+  - Interface modern dengan Tailwind CSS (Zinc theme)
+  - Proteksi route dengan decorator `@admin_required`
+
+## Teknologi yang Digunakan 
 
 - **Backend**: Flask, SQLAlchemy, Flask-JWT-Extended
 - **Database**: MySQL
@@ -297,3 +306,44 @@ gunicorn -w 4 -b 0.0.0.0:5000 app:app
 ## License
 
 MIT License - lihat file LICENSE untuk detail lengkap.
+
+## 🛠️ Penjelasan Teknis Admin CRUD
+
+Fitur Admin Dashboard diimplementasikan menggunakan pendekatan **Server-Side Rendering (SSR)** dengan Flask `render_template` dan styling menggunakan **Tailwind CSS**.
+
+### 1. Authentication Flow
+Sistem login admin dibuat sederhana namun aman untuk kebutuhan internal:
+- **Credentials**: Username dan password admin disimpan di environment variables (`ADMIN_USERNAME`, `ADMIN_PASSWORD`).
+- **Session**: Menggunakan Flask `session` untuk menyimpan status login (`session['admin_logged_in'] = True`).
+- **Decorator**: Custom decorator `@admin_required` dibuat untuk memproteksi route admin. Jika user belum login, akan di-redirect ke halaman login.
+
+```python
+# app/routes/question.py
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin_logged_in'):
+            return redirect(url_for('question.admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+```
+
+### 2. CRUD Implementation
+Setiap entitas (LearningQuestion dan TestQuestion) memiliki set route lengkap:
+- **List (GET)**: Mengambil semua data dari database dan me-render tabel.
+- **Create (GET/POST)**: Menampilkan form kosong (GET) dan memproses input baru (POST).
+- **Edit (GET/POST)**: Menampilkan form terisi data lama (GET) dan memproses update (POST).
+- **Delete (POST)**: Menghapus data berdasarkan ID.
+
+### 3. Frontend & Styling
+- **Base Template**: `base.html` memuat CDN Tailwind CSS dan konfigurasi tema warna **Zinc**.
+- **Components**: Menggunakan utility classes Tailwind untuk membuat UI yang konsisten (Card, Form Input, Button, Table).
+- **Feedback**: Menggunakan Flask `flash` messages untuk notifikasi sukses/gagal operasi.
+
+### 4. Konfigurasi
+Pastikan `.env` memiliki konfigurasi berikut:
+```env
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin
+```
+Jika tidak di-set, defaultnya adalah `admin` / `admin`.

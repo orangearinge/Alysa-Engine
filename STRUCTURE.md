@@ -40,12 +40,11 @@ alysa-engine/
 │       └── 📄 gemini.py        # Gemini AI feedback model
 │
 ├── 📁 tests/                   # Test files
-│   ├── 📄 __init__.py
-│   ├── 📄 test_api.py          # API endpoint tests
-│   ├── 📄 test_mysql.py        # Database tests
-│   └── 📄 test_routes.py       # Route-specific tests
-│
-└── 📁 app_old.py, app_original.py  # Backup files
+    ├── 📄 __init__.py
+    ├── 📄 test_api.py          # API endpoint tests
+    ├── 📄 test_mysql.py        # Database tests
+    └── 📄 test_routes.py       # Route-specific tests
+
 ```
 
 ## 🏗️ Architecture Overview
