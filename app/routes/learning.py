@@ -1,7 +1,9 @@
 import json
+
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models.database import db, LearningQuestion, UserAttempt
+from flask_jwt_extended import get_jwt_identity, jwt_required
+
+from app.models.database import LearningQuestion, UserAttempt, db
 from app.utils.helpers import get_learning_questions_by_level
 
 learning_bp = Blueprint('learning', __name__)
@@ -13,10 +15,10 @@ def get_learning_questions():
         # Get query parameters
         level = request.args.get('level', type=int)
         skill_type = request.args.get('skill_type')
-        
+
         # Get questions from database
         questions = get_learning_questions_by_level(level, skill_type)
-        
+
         questions_data = []
         for q in questions:
             questions_data.append({
@@ -27,9 +29,9 @@ def get_learning_questions():
                 'reference_answer': q.reference_answer,
                 'keywords': json.loads(q.keywords) if q.keywords else []
             })
-        
+
         return jsonify({'questions': questions_data}), 200
-    
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

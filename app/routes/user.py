@@ -1,7 +1,9 @@
 import json
+
 from flask import Blueprint, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models.database import UserAttempt, TestSession, TestAnswer, OCRTranslation
+from flask_jwt_extended import get_jwt_identity, jwt_required
+
+from app.models.database import OCRTranslation, TestAnswer, TestSession, UserAttempt
 
 user_bp = Blueprint('user', __name__)
 
@@ -44,7 +46,7 @@ def get_user_test_sessions():
         for session in sessions:
             # Get related test answers
             test_answers = TestAnswer.query.filter_by(test_session_id=session.id).all()
-            
+
             test_answers_data = []
             for answer in test_answers:
                 test_answers_data.append({
@@ -57,7 +59,7 @@ def get_user_test_sessions():
                     'feedback': json.loads(answer.ai_feedback) if answer.ai_feedback else {},
                     'created_at': answer.created_at.isoformat()
                 })
-            
+
             sessions_data.append({
                 'id': session.id,
                 'total_score': session.total_score,

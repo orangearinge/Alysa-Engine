@@ -1,5 +1,7 @@
 import bcrypt
+
 from app.models.database import LearningQuestion, TestQuestion
+
 
 # Helper functions for password management
 def hash_password(password):

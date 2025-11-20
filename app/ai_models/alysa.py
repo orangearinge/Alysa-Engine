@@ -1,8 +1,10 @@
 # AI TOEFL Feedback Generator
-import language_tool_python
-from sentence_transformers import SentenceTransformer, util
-import torch
 import re
+
+import language_tool_python
+import torch
+from sentence_transformers import SentenceTransformer, util
+
 
 def ai_toefl_feedback(essay_text):
     # ------------------------------------------------------------
@@ -83,12 +85,12 @@ def ai_toefl_feedback(essay_text):
 # ------------------------------------------------------------
 if __name__ == "__main__":
     essay = """
-    Many students want study abroad because they believe it give them more opportunity. 
-    Studying in another country help them learn different culture and language. 
-    But sometimes they feel lonely and hard to adapt new environment. 
+    Many students want study abroad because they believe it give them more opportunity.
+    Studying in another country help them learn different culture and language.
+    But sometimes they feel lonely and hard to adapt new environment.
     In my view, studying abroad is good experience if student prepare well before go.
     """
-    
+
     print("Testing Alysa TOEFL Feedback Model...")
     result = ai_toefl_feedback(essay)
     print("Result:")

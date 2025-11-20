@@ -1,13 +1,13 @@
-import easyocr
-from PIL import Image
-import numpy as np
-from google import genai
 import json
-import gradio as gr
 import re
 import ssl
-import certifi
 
+import certifi
+import easyocr
+import gradio as gr
+import numpy as np
+from google import genai
+from PIL import Image
 
 # KONFIGURASI API & SSL
 ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())

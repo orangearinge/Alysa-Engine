@@ -1,9 +1,24 @@
 import json
 from functools import wraps
-from flask import Blueprint, jsonify, request, render_template, session, redirect, url_for, flash, current_app
+
+from flask import (
+    Blueprint,
+    current_app,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from flask_jwt_extended import jwt_required
-from app.utils.helpers import get_learning_questions_by_level, get_test_questions_by_task_type
-from app.models.database import db, LearningQuestion, TestQuestion
+
+from app.models.database import LearningQuestion, TestQuestion, db
+from app.utils.helpers import (
+    get_learning_questions_by_level,
+    get_test_questions_by_task_type,
+)
 
 question_bp = Blueprint('question', __name__)
 
@@ -22,13 +37,13 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        
+
         if username == current_app.config.get('ADMIN_USERNAME') and password == current_app.config.get('ADMIN_PASSWORD'):
             session['admin_logged_in'] = True
             return redirect(url_for('question.admin_dashboard'))
         else:
             flash('Invalid credentials', 'error')
-            
+
     return render_template('admin/login.html')
 
 @question_bp.route('/admin/logout')
@@ -67,14 +82,14 @@ def admin_learning_create():
             return redirect(url_for('question.admin_learning_list'))
         except Exception as e:
             flash(f'Error creating question: {str(e)}', 'error')
-            
+
     return render_template('admin/learning_form.html', question=None)
 
 @question_bp.route('/admin/learning/edit/<int:id>', methods=['GET', 'POST'])
 @admin_required
 def admin_learning_edit(id):
     question = LearningQuestion.query.get_or_404(id)
-    
+
     if request.method == 'POST':
         try:
             question.skill_type = request.form['skill_type']
@@ -82,13 +97,13 @@ def admin_learning_edit(id):
             question.prompt = request.form['prompt']
             question.reference_answer = request.form.get('reference_answer')
             question.keywords = request.form.get('keywords', '[]')
-            
+
             db.session.commit()
             flash('Question updated successfully', 'success')
             return redirect(url_for('question.admin_learning_list'))
         except Exception as e:
             flash(f'Error updating question: {str(e)}', 'error')
-            
+
     return render_template('admin/learning_form.html', question=question)
 
 @question_bp.route('/admin/learning/delete/<int:id>', methods=['POST'])
@@ -104,7 +119,7 @@ def admin_learning_delete(id):
     return redirect(url_for('question.admin_learning_list'))
 
 # --- Test Question CRUD ---
-    
+
 @question_bp.route('/admin/test')
 @admin_required
 def admin_test_list():
@@ -129,14 +144,14 @@ def admin_test_create():
             return redirect(url_for('question.admin_test_list'))
         except Exception as e:
             flash(f'Error creating question: {str(e)}', 'error')
-            
+
     return render_template('admin/test_form.html', question=None)
 
 @question_bp.route('/admin/test/edit/<int:id>', methods=['GET', 'POST'])
 @admin_required
 def admin_test_edit(id):
     question = TestQuestion.query.get_or_404(id)
-    
+
     if request.method == 'POST':
         try:
             question.section = request.form['section']
@@ -144,13 +159,13 @@ def admin_test_edit(id):
             question.prompt = request.form['prompt']
             question.reference_answer = request.form.get('reference_answer')
             question.keywords = request.form.get('keywords', '[]')
-            
+
             db.session.commit()
             flash('Question updated successfully', 'success')
             return redirect(url_for('question.admin_test_list'))
         except Exception as e:
             flash(f'Error updating question: {str(e)}', 'error')
-            
+
     return render_template('admin/test_form.html', question=question)
 
 @question_bp.route('/admin/test/delete/<int:id>', methods=['POST'])
@@ -174,9 +189,9 @@ def get_all_learning_questions():
     try:
         level = request.args.get('level', type=int)
         skill_type = request.args.get('skill_type')
-        
+
         questions = get_learning_questions_by_level(level, skill_type)
-        
+
         questions_data = []
         for q in questions:
             questions_data.append({
@@ -188,9 +203,9 @@ def get_all_learning_questions():
                 'keywords': json.loads(q.keywords) if q.keywords else [],
                 'created_at': q.created_at.isoformat()
             })
-        
+
         return jsonify({'questions': questions_data}), 200
-    
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -201,9 +216,9 @@ def get_all_test_questions():
     try:
         task_type = request.args.get('task_type')
         section = request.args.get('section')
-        
+
         questions = get_test_questions_by_task_type(task_type, section)
-        
+
         questions_data = []
         for q in questions:
             questions_data.append({
@@ -215,8 +230,8 @@ def get_all_test_questions():
                 'keywords': json.loads(q.keywords) if q.keywords else [],
                 'created_at': q.created_at.isoformat()
             })
-        
+
         return jsonify({'questions': questions_data}), 200
-    
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500

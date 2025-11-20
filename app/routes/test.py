@@ -1,8 +1,10 @@
 import json
 from datetime import datetime
+
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models.database import db, TestQuestion, TestSession, TestAnswer
+from flask_jwt_extended import get_jwt_identity, jwt_required
+
+from app.models.database import TestAnswer, TestQuestion, TestSession, db
 
 test_bp = Blueprint('test', __name__)
 
@@ -16,16 +18,16 @@ def start_test_session():
     try:
         user_id = int(get_jwt_identity())
         data = request.get_json() or {}
-        
+
         # TOEFL iBT requires exactly 6 tasks in specific order
         # Get all test questions from database (should be exactly 6)
         all_questions = TestQuestion.query.order_by(TestQuestion.id).all()
-        
+
         if len(all_questions) != 6:
             return jsonify({
                 'error': f'TOEFL iBT test requires exactly 6 questions. Found {len(all_questions)} questions in database.'
             }), 500
-        
+
         # Validate that we have the correct TOEFL iBT structure
         expected_structure = [
             {'section': 'speaking', 'task_type': 'independent'},   # Task 1
@@ -35,14 +37,14 @@ def start_test_session():
             {'section': 'writing', 'task_type': 'integrated'},     # Task 5
             {'section': 'writing', 'task_type': 'independent'}     # Task 6
         ]
-        
+
         # Validate question structure
         for i, (question, expected) in enumerate(zip(all_questions, expected_structure)):
             if question.section != expected['section'] or question.task_type != expected['task_type']:
                 return jsonify({
                     'error': f'Question {i+1}: Expected {expected["section"]} {expected["task_type"]}, got {question.section} {question.task_type}'
                 }), 500
-        
+
         # Create new test session
         test_session = TestSession(
             user_id=user_id,
@@ -52,7 +54,7 @@ def start_test_session():
 
         db.session.add(test_session)
         db.session.commit()
-        
+
         # Format questions for response with task_id
         questions_data = []
         for i, q in enumerate(all_questions):
@@ -112,7 +114,7 @@ def submit_test_answers():
             return jsonify({'error': 'Test session not found'}), 404
 
         task_answers = data.get('task_answers', [])
-        
+
         # Validate that we have exactly 6 tasks for a complete TOEFL iBT test
         if len(task_answers) != 6:
             return jsonify({
@@ -125,7 +127,7 @@ def submit_test_answers():
         total_score = 0
         task_count = 0
         detailed_feedback = []
-        
+
         # Define expected TOEFL iBT task structure
         expected_tasks = [
             {'task_id': 1, 'section': 'speaking', 'task_type': 'independent'},
@@ -142,36 +144,36 @@ def submit_test_answers():
             task_type = task_data.get('task_type')
             section = task_data.get('section')
             answers = task_data.get('answers', [])
-            
+
             # Validate task structure
             if not task_id or not task_type or not section:
                 return jsonify({
                     'error': f'Task {i+1}: Missing required fields (task_id, task_type, section)'
                 }), 400
-            
+
             if not answers:
                 return jsonify({
                     'error': f'Task {task_id}: No answers provided. Each task must have at least one answer.'
                 }), 400
-            
+
             # Validate against expected task structure
             expected = expected_tasks[i] if i < len(expected_tasks) else None
-            if expected and (task_id != expected['task_id'] or 
-                           section != expected['section'] or 
+            if expected and (task_id != expected['task_id'] or
+                           section != expected['section'] or
                            task_type != expected['task_type']):
                 return jsonify({
                     'error': f'Task {task_id}: Invalid task structure. Expected task_id={expected["task_id"]}, section={expected["section"]}, task_type={expected["task_type"]}'
                 }), 400
-            
+
             # Collect question IDs and user inputs for this specific task
             question_ids = []
             user_inputs = []
             combined_text = ""
-            
+
             for answer_item in answers:
                 question_id = answer_item.get('question_id')
                 answer_text = answer_item.get('answer', '').strip()
-                
+
                 if question_id and answer_text:
                     question_ids.append(question_id)
                     user_inputs.append({
@@ -179,24 +181,24 @@ def submit_test_answers():
                         'answer': answer_text
                     })
                     combined_text += answer_text + " "
-            
+
             if not question_ids:
                 return jsonify({
                     'error': f'Task {task_id}: No valid answers found. Each answer must have question_id and non-empty answer text.'
                 }), 400
-            
+
             # Evaluate this task individually using test mode
             task_text = combined_text.strip()
             feedback_result = gemini_feedback(task_text, mode="test")
             task_score = feedback_result.get('score', 0)
-            
+
             # Validate score is within expected range
             if not isinstance(task_score, (int, float)) or task_score < 0 or task_score > 5:
                 task_score = 0  # Default to 0 if invalid score
-            
+
             total_score += task_score
             task_count += 1
-            
+
             # Save individual test answer record
             test_answer = TestAnswer(
                 test_session_id=session.id,
@@ -208,7 +210,7 @@ def submit_test_answers():
                 score=task_score
             )
             db.session.add(test_answer)
-            
+
             # Add to detailed feedback
             detailed_feedback.append({
                 'task_id': task_id,

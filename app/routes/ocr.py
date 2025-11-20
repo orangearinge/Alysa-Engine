@@ -1,9 +1,11 @@
 import json
+
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from PIL import Image
-from app.models.database import db, OCRTranslation
+
 from app.ai_models.ocr import process_image
+from app.models.database import OCRTranslation, db
 
 ocr_bp = Blueprint('ocr', __name__)
 
