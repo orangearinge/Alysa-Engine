@@ -15,6 +15,9 @@ from app.routes.test import test_bp
 from app.routes.user import user_bp
 from config import Config
 
+# Import Firebase initialization
+from app.firebase_config import initialize_firebase
+
 # Load environment variables
 load_dotenv()
 
@@ -24,6 +27,9 @@ def create_app():
 
     # Configuration
     app.config.from_object(Config)
+
+    # Initialize Firebase Admin SDK
+    initialize_firebase()
 
     # Initialize extensions
     db.init_app(app)

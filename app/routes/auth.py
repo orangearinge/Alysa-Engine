@@ -1,70 +1,62 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token
+from firebase_admin import auth as firebase_auth
+import uuid
 
 from app.models.database import User, db
-from app.utils.helpers import check_password, hash_password
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/api/register', methods=['POST'])
-def register():
+@auth_bp.route('/api/auth/firebase-login', methods=['POST'])
+def firebase_login():
+    """
+    Endpoint for logging in with Firebase ID Token.
+    Verifies the token, creates/retrieves user, and issues a JWT access token.
+    """
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({'error': 'Missing or invalid Authorization header'}), 401
+    
+    id_token = auth_header.split('Bearer ')[1].strip()
+    
+    # Debug: Print incoming token details
+    print(f"Received ID Token (len={len(id_token)}): {id_token[:10]}...")
+
     try:
-        data = request.get_json()
+        # Verify Firebase Token
+        decoded_token = firebase_auth.verify_id_token(id_token)
+        uid = decoded_token['uid']
+        email = decoded_token.get('email')
+        
+        if not email:
+            return jsonify({'error': 'Email is required from Firebase provider'}), 400
 
-        if not data or not data.get('username') or not data.get('email') or not data.get('password'):
-            return jsonify({'error': 'Missing required fields'}), 400
-
-        # Check if user already exists
-        if User.query.filter_by(username=data['username']).first():
-            return jsonify({'error': 'Username already exists'}), 400
-
-        if User.query.filter_by(email=data['email']).first():
-            return jsonify({'error': 'Email already exists'}), 400
-
-        # Create new user
-        hashed_password = hash_password(data['password'])
-        new_user = User(
-            username=data['username'],
-            email=data['email'],
-            password_hash=hashed_password
-        )
-
-        db.session.add(new_user)
-        db.session.commit()
-
-        # Create access token
-        access_token = create_access_token(identity=str(new_user.id))
-
-        return jsonify({
-            'message': 'User registered successfully',
-            'access_token': access_token,
-            'user': {
-                'id': new_user.id,
-                'username': new_user.username,
-                'email': new_user.email
-            }
-        }), 201
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@auth_bp.route('/api/login', methods=['POST'])
-def login():
-    try:
-        data = request.get_json()
-
-        if not data or not data.get('username') or not data.get('password'):
-            return jsonify({'error': 'Missing username or password'}), 400
-
-        # Find user
-        user = User.query.filter_by(username=data['username']).first()
-
-        if not user or not check_password(data['password'], user.password_hash):
-            return jsonify({'error': 'Invalid credentials'}), 401
-
-        # Create access token
+        # Check if user exists in DB
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            # Create new user
+            # Generate a username from email
+            base_username = email.split('@')[0]
+            username = base_username
+            counter = 1
+            # Ensure username is unique
+            while User.query.filter_by(username=username).first():
+                username = f"{base_username}{counter}"
+                counter += 1
+            
+            new_user = User(
+                username=username,
+                email=email
+            )
+            
+            db.session.add(new_user)
+            db.session.commit()
+            user = new_user
+            
+        # Create access token (JWT)
         access_token = create_access_token(identity=str(user.id))
-
+        
         return jsonify({
             'message': 'Login successful',
             'access_token': access_token,
@@ -74,6 +66,12 @@ def login():
                 'email': user.email
             }
         }), 200
-
+        
+    except ValueError as e:
+        print(f"Firebase Token Verification Failed: {e}")
+        return jsonify({'error': f'Invalid token format or signature: {str(e)}'}), 401
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(f"Firebase login error: {e}")
+        return jsonify({'error': f'Authentication failed: {str(e)}'}), 401
+
+

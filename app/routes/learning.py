@@ -14,7 +14,7 @@ def get_learning_questions():
     try:
         # Get query parameters
         level = request.args.get('level', type=int)
-        skill_type = request.args.get('skill_type')
+        skill_type = request.args   .get('skill_type')
 
         # Get questions from database
         questions = get_learning_questions_by_level(level, skill_type)
