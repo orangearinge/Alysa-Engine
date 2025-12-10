@@ -19,3 +19,4 @@ __pycache__/
 # Sensitive configuration files
 .env
 config.ini
+serviceAccountKey.json
