@@ -5,24 +5,28 @@ Sistem pembelajaran bahasa Inggris dengan fokus pada Speaking & Writing untuk TO
 ## Fitur Utama
 
 ### 🎓 Mode Learning
+
 - Latihan soal speaking/writing dengan feedback AI real-time
 - Pilihan model AI: Alysa (lokal) atau Gemini (cloud)
 - Analisis grammar, coherence, dan scoring otomatis
 - Riwayat latihan dan progress tracking
 
 ### 📝 Mode Test Simulation
+
 - Simulasi test TOEFL iBT
 - Timer countdown untuk pengalaman test yang realistis
 - Scoring komprehensif dengan feedback detail
 - Laporan hasil test dengan saran improvement
 
 ### 🔍 OCR Translation
+
 - Upload gambar dengan teks bahasa Indonesia
 - Ekstraksi teks otomatis menggunakan EasyOCR
 - Terjemahan ke bahasa Inggris dengan penjelasan grammar
 - Analisis vocabulary dan struktur kalimat
 
 ### 🔐 Admin Dashboard
+
 - **URL**: `/admin/login`
 - **Authentication**: Simple Admin Auth (Username/Password dari `.env`)
 - **Fitur**:
@@ -31,11 +35,11 @@ Sistem pembelajaran bahasa Inggris dengan fokus pada Speaking & Writing untuk TO
   - Interface modern dengan Tailwind CSS (Zinc theme)
   - Proteksi route dengan decorator `@admin_required`
 
-## Teknologi yang Digunakan 
+## Teknologi yang Digunakan
 
 - **Backend**: Flask, SQLAlchemy, Flask-JWT-Extended
 - **Database**: MySQL
-- **AI Models**: 
+- **AI Models**:
   - Alysa (LanguageTool + Sentence Transformers)
   - Google Gemini API
 - **OCR**: EasyOCR + PIL
@@ -44,6 +48,7 @@ Sistem pembelajaran bahasa Inggris dengan fokus pada Speaking & Writing untuk TO
 ## Setup dan Instalasi
 
 ### 1. Prerequisites
+
 ```bash
 # Install MySQL
 brew install mysql  # macOS
@@ -57,17 +62,20 @@ sudo systemctl start mysql  # Ubuntu
 ```
 
 ### 2. Clone Repository
+
 ```bash
 git clone <repository-url>
 cd alysa-engine
 ```
 
 ### 3. Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 4. Environment Configuration
+
 ```bash
 # Copy environment file
 cp .env.example .env
@@ -77,6 +85,7 @@ nano .env
 ```
 
 Isi file `.env`:
+
 ```env
 # Database Configuration
 DB_HOST=localhost
@@ -97,12 +106,14 @@ FLASK_DEBUG=True
 ```
 
 ### 5. Database Setup
+
 ```bash
 # Jalankan script inisialisasi database
 python init_db.py
 ```
 
 ### 6. Run Application
+
 ```bash
 python app.py
 ```
@@ -112,38 +123,46 @@ Server akan berjalan di `http://localhost:5000`
 ## API Endpoints
 
 ### Authentication
+
 - `POST /api/register` - Registrasi user baru
 - `POST /api/login` - Login user
 
 ### Learning Mode
+
 - `GET /api/learning/questions` - Ambil daftar soal learning
 - `POST /api/learning/submit` - Submit jawaban dengan AI feedback
 
 ### Test Simulation
+
 - `POST /api/test/start` - Mulai sesi test baru
 - `POST /api/test/submit` - Submit jawaban test lengkap
 
 ### OCR Translation
+
 - `POST /api/ocr/translate` - Upload gambar untuk OCR dan terjemahan
 
 ### User History
+
 - `GET /api/user/attempts` - Riwayat latihan user
 - `GET /api/user/test-sessions` - Riwayat test sessions
 - `GET /api/user/ocr-history` - Riwayat OCR translations
 
 ### Health Check
+
 - `GET /api/health` - Status kesehatan API
 
 ## Struktur Database
 
 ### users
+
 - `id` - Primary key
 - `username` - Username unik
-- `email` - Email unik  
+- `email` - Email unik
 - `password_hash` - Password ter-hash
 - `created_at` - Timestamp pembuatan
 
 ### user_attempts
+
 - `id` - Primary key
 - `user_id` - Foreign key ke users
 - `question_title` - Judul soal
@@ -153,6 +172,7 @@ Server akan berjalan di `http://localhost:5000`
 - `created_at` - Timestamp pengerjaan
 
 ### test_sessions
+
 - `id` - Primary key
 - `user_id` - Foreign key ke users
 - `total_score` - Total skor keseluruhan
@@ -161,6 +181,7 @@ Server akan berjalan di `http://localhost:5000`
 - `finished_at` - Waktu selesai test
 
 ### ocr_translations
+
 - `id` - Primary key
 - `user_id` - Foreign key ke users
 - `original_text` - Teks asli dari gambar
@@ -170,17 +191,19 @@ Server akan berjalan di `http://localhost:5000`
 ## Contoh Penggunaan API
 
 ### 1. Register User
+
 ```bash
 curl -X POST http://localhost:5000/api/register \
   -H "Content-Type: application/json" \
   -d '{
     "username": "john_doe",
-    "email": "john@example.com", 
+    "email": "john@example.com",
     "password": "password123"
   }'
 ```
 
 ### 2. Login
+
 ```bash
 curl -X POST http://localhost:5000/api/login \
   -H "Content-Type: application/json" \
@@ -191,6 +214,7 @@ curl -X POST http://localhost:5000/api/login \
 ```
 
 ### 3. Submit Learning Answer
+
 ```bash
 curl -X POST http://localhost:5000/api/learning/submit \
   -H "Content-Type: application/json" \
@@ -203,6 +227,7 @@ curl -X POST http://localhost:5000/api/learning/submit \
 ```
 
 ### 4. Upload OCR Image
+
 ```bash
 curl -X POST http://localhost:5000/api/ocr/translate \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
@@ -212,6 +237,7 @@ curl -X POST http://localhost:5000/api/ocr/translate \
 ## Model AI yang Tersedia
 
 ### Alysa Model (Local)
+
 - **Grammar Check**: LanguageTool untuk deteksi kesalahan grammar
 - **Coherence Analysis**: Sentence Transformers untuk analisis keterkaitan antar kalimat
 - **Scoring**: Algoritma heuristik berdasarkan grammar errors dan coherence
@@ -219,6 +245,7 @@ curl -X POST http://localhost:5000/api/ocr/translate \
 - **Kekurangan**: Terbatas pada aturan grammar yang sudah ada
 
 ### Gemini Model (Cloud)
+
 - **Dynamic Analysis**: AI generatif untuk analisis komprehensif
 - **Natural Feedback**: Feedback yang lebih natural dan kontekstual
 - **Advanced Scoring**: Scoring yang lebih akurat berdasarkan standar TOEFL
@@ -228,6 +255,7 @@ curl -X POST http://localhost:5000/api/ocr/translate \
 ## Development
 
 ### Menjalankan dalam Mode Development
+
 ```bash
 export FLASK_ENV=development
 export FLASK_DEBUG=True
@@ -235,6 +263,7 @@ python app.py
 ```
 
 ### Testing
+
 ```bash
 # Install testing dependencies
 pip install pytest pytest-flask
@@ -244,6 +273,7 @@ pytest
 ```
 
 ### Database Migration
+
 ```bash
 # Initialize migration
 flask db init
@@ -258,6 +288,7 @@ flask db upgrade
 ## Deployment
 
 ### Production Setup
+
 1. Set environment variables untuk production
 2. Gunakan WSGI server seperti Gunicorn
 3. Setup reverse proxy dengan Nginx
@@ -312,7 +343,9 @@ MIT License - lihat file LICENSE untuk detail lengkap.
 Fitur Admin Dashboard diimplementasikan menggunakan pendekatan **Server-Side Rendering (SSR)** dengan Flask `render_template` dan styling menggunakan **Tailwind CSS**.
 
 ### 1. Authentication Flow
+
 Sistem login admin dibuat sederhana namun aman untuk kebutuhan internal:
+
 - **Credentials**: Username dan password admin disimpan di environment variables (`ADMIN_USERNAME`, `ADMIN_PASSWORD`).
 - **Session**: Menggunakan Flask `session` untuk menyimpan status login (`session['admin_logged_in'] = True`).
 - **Decorator**: Custom decorator `@admin_required` dibuat untuk memproteksi route admin. Jika user belum login, akan di-redirect ke halaman login.
@@ -329,21 +362,27 @@ def admin_required(f):
 ```
 
 ### 2. CRUD Implementation
+
 Setiap entitas (LearningQuestion dan TestQuestion) memiliki set route lengkap:
+
 - **List (GET)**: Mengambil semua data dari database dan me-render tabel.
 - **Create (GET/POST)**: Menampilkan form kosong (GET) dan memproses input baru (POST).
 - **Edit (GET/POST)**: Menampilkan form terisi data lama (GET) dan memproses update (POST).
 - **Delete (POST)**: Menghapus data berdasarkan ID.
 
 ### 3. Frontend & Styling
+
 - **Base Template**: `base.html` memuat CDN Tailwind CSS dan konfigurasi tema warna **Zinc**.
 - **Components**: Menggunakan utility classes Tailwind untuk membuat UI yang konsisten (Card, Form Input, Button, Table).
-- **Feedback**: Menggunakan Flask `flash` messages untuk notifikasi sukses/gagal operasi.
+- **Feedback**: Menggunakan Flask `-` messages untuk notifikasi sukses/gagal operasi.
 
 ### 4. Konfigurasi
+
 Pastikan `.env` memiliki konfigurasi berikut:
+
 ```env
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin
 ```
+
 Jika tidak di-set, defaultnya adalah `admin` / `admin`.

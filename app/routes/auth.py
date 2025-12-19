@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token
 from firebase_admin import auth as firebase_auth
-import uuid
 
 from app.models.database import User, db
 
@@ -25,7 +24,6 @@ def firebase_login():
     try:
         # Verify Firebase Token
         decoded_token = firebase_auth.verify_id_token(id_token)
-        uid = decoded_token['uid']
         email = decoded_token.get('email')
         
         if not email:

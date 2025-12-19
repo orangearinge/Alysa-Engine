@@ -1,11 +1,70 @@
-import json
-
-from flask import Blueprint, jsonify
+from datetime import datetime
+from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-
-from app.models.database import OCRTranslation, TestAnswer, TestSession, UserAttempt
+from app.models.database import db, User, OCRTranslation, TestAnswer, TestSession, UserAttempt
 
 user_bp = Blueprint('user', __name__)
+
+@user_bp.route('/api/user/profile', methods=['GET'])
+@jwt_required()
+def get_user_profile():
+    try:
+        user_id = int(get_jwt_identity())
+        user = User.query.get(user_id)
+        
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        return jsonify({
+            'username': user.username,
+            'email': user.email,
+            'target_score': user.target_score,
+            'daily_study_time_minutes': user.daily_study_time_minutes,
+            'test_date': user.test_date.isoformat() if user.test_date else None
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@user_bp.route('/api/user/profile', methods=['PUT'])
+@jwt_required()
+def update_user_profile():
+    try:
+        user_id = int(get_jwt_identity())
+        user = User.query.get(user_id)
+        
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        data = request.get_json()
+        
+        if 'target_score' in data:
+            user.target_score = float(data['target_score'])
+        if 'daily_study_time_minutes' in data:
+            user.daily_study_time_minutes = int(data['daily_study_time_minutes'])
+        if 'test_date' in data:
+            try:
+                # Handle ISO format string
+                user.test_date = datetime.fromisoformat(data['test_date'].replace('Z', '+00:00'))
+            except ValueError:
+                pass
+                
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Profile updated successfully',
+            'user': {
+                'username': user.username,
+                'email': user.email,
+                'target_score': user.target_score,
+                'daily_study_time_minutes': user.daily_study_time_minutes,
+                'test_date': user.test_date.isoformat() if user.test_date else None
+            }
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @user_bp.route('/api/user/attempts', methods=['GET'])
 @jwt_required()
