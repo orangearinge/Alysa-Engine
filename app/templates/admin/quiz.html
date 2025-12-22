@@ -1,6 +1,6 @@
 {% extends "admin/base.html" %} {% block content %}
 <div
-  class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8"
+  class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-10"
 >
   <div>
     <h2 class="text-3xl font-extrabold text-zinc-900 tracking-tight">
@@ -11,11 +11,11 @@
     </p>
   </div>
 
-  <div class="flex flex-col md:flex-row w-full md:w-auto gap-3">
+  <div class="flex flex-col md:flex-row w-full lg:w-auto items-center gap-3">
     <form
       action="{{ url_for('admin.quiz') }}"
       method="GET"
-      class="flex w-full md:w-auto gap-2"
+      class="flex flex-col md:flex-row gap-2 w-full"
     >
       <div class="relative w-full md:w-64">
         <input
@@ -23,11 +23,11 @@
           name="search"
           value="{{ search }}"
           placeholder="Search quizzes..."
-          class="w-full pl-4 pr-10 py-2.5 border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition text-sm"
+          class="w-full h-10 pl-4 pr-10 border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition text-xs"
         />
         <button
           type="submit"
-          class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400"
+          class="absolute right-0 top-0 h-10 w-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 transition"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -48,29 +48,15 @@
       {% if search %}
       <a
         href="{{ url_for('admin.quiz') }}"
-        class="px-5 py-2.5 bg-zinc-100 text-zinc-600 rounded-lg hover:bg-zinc-200 text-sm transition font-medium flex items-center justify-center"
+        class="h-10 px-4 flex items-center justify-center bg-zinc-100 text-zinc-600 rounded-lg hover:bg-zinc-200 text-xs transition font-medium"
         >Clear</a
       >
       {% endif %}
     </form>
     <a
       href="{{ url_for('admin.create_quiz') }}"
-      class="inline-flex items-center justify-center px-5 py-2.5 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800 transition text-sm font-bold"
+      class="h-10 px-5 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800 transition text-xs font-bold flex items-center justify-center whitespace-nowrap"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-4 w-4 mr-2"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 4v16m8-8H4"
-        />
-      </svg>
       New Quiz
     </a>
   </div>
