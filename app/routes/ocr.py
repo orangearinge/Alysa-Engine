@@ -10,12 +10,14 @@ from app.models.database import OCRTranslation, db
 ocr_bp = Blueprint('ocr', __name__)
 
 @ocr_bp.route('/api/ocr/translate', methods=['POST'])
-# @jwt_required()
+@jwt_required(optional=True)
 def ocr_translate():
     try:
         # Get user_id if authenticated, otherwise None
+        identity = get_jwt_identity()
+        print(f"OCR Request incoming. Identity: {identity}")
         try:
-            user_id = int(get_jwt_identity()) if get_jwt_identity() else None
+            user_id = int(identity) if identity else None
         except:
             user_id = None
 
