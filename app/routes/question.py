@@ -1,6 +1,8 @@
 import json
+
 from flask import Blueprint, jsonify, request
-from app.models.database import db, Lesson, LessonSection, Quiz, QuizQuestion
+
+from app.models.database import Lesson, LessonSection, Quiz, QuizQuestion, db
 
 question_bp = Blueprint('question', __name__)
 
@@ -19,11 +21,11 @@ def seed_content():
         # QuizQuestion.query.delete()
         # Quiz.query.delete()
         # Lesson.query.delete()
-        
+
         # 1. Create Quizzes
         q1 = Quiz(id='q1', title='Speaking Basics Quiz')
         db.session.merge(q1)
-        
+
         q1_questions = [
             QuizQuestion(
                 quiz_id='q1',
@@ -42,24 +44,24 @@ def seed_content():
              db.session.add(q) # Merge might be tricky without IDs, so just add. duplicate check omitted for speed.
 
         # 2. Create Lessons
-        
+
         # SPEAKING
         l1 = Lesson(
-            id='1', 
+            id='1',
             title='Introduction to IELTS Speaking',
             description='Learn the basics of the Speaking test format.',
             category='Speaking',
             duration_minutes=15
         )
         db.session.merge(l1)
-        
+
         l1_sections = [
             LessonSection(lesson_id='1', title='Overview', content='The IELTS Speaking test consists of 3 parts and lasts 11-14 minutes. It is a face-to-face interview with an examiner.'),
             LessonSection(lesson_id='1', title='Part 1: Introduction and Interview', content='In this part, the examiner asks you general questions about yourself...'),
             LessonSection(lesson_id='1', title='Part 2: Long Turn', content='You will be given a card which asks you to talk about a particular topic...'),
             LessonSection(lesson_id='1', title='Quiz: Speaking Basics', quiz_id='q1')
         ]
-        
+
         l2 = Lesson(id='s2', title='Speaking Part 2 Strategies', description='Master the "Long Turn" with effective note-taking.', category='Speaking', duration_minutes=15)
         db.session.merge(l2)
         l2_sections = [
@@ -89,7 +91,7 @@ def seed_content():
              LessonSection(lesson_id='2', title='Key Vocabulary', content='Use words like "increase", "decrease", "fluctuate".'),
              LessonSection(lesson_id='2', title='Quiz: Bar Charts', quiz_id='q1') # Reusing q1
         ]
-        
+
         w2 = Lesson(id='w2', title='Writing Task 2: Essay Structures', description='Organize your opinion or argument essays clearly.', category='Writing', duration_minutes=30)
         db.session.merge(w2)
         w2_sections = [
@@ -147,7 +149,7 @@ def seed_content():
         r2_sections = [
             LessonSection(lesson_id='r2', title='Proper Nouns and Dates', content='Scan for capital letters and numbers.')
         ]
-        
+
         r3 = Lesson(id='r3', title='True, False, Not Given', description='Strategies to handle this tricky question type.', category='Reading', duration_minutes=25)
         db.session.merge(r3)
         r3_sections = [
@@ -160,13 +162,13 @@ def seed_content():
              LessonSection(lesson_id='r4', title='Don\'t rely on flexible keywords', content='Focus on the main idea.')
         ]
 
-        
+
         # Add all sections
         all_sections = l1_sections + l2_sections + l3_sections + l4_sections + \
                        w1_sections + w2_sections + w3_sections + w4_sections + \
                        li1_sections + li2_sections + li3_sections + li4_sections + \
                        r1_sections + r2_sections + r3_sections + r4_sections
-                       
+
         for s in all_sections:
             db.session.add(s)
 
