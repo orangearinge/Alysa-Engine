@@ -1,21 +1,191 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %} {% block content %}
+<div class="mb-8">
+  <h2 class="text-3xl font-extrabold text-zinc-900 tracking-tight">
+    System Overview
+  </h2>
+  <p class="text-zinc-500 mt-1">
+    Monitor user activity and content performance.
+  </p>
+</div>
 
-{% block content %}
-<div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold mb-8 text-zinc-900">Dashboard</h1>
-
-    <div class="grid md:grid-cols-2 gap-6">
-        <a href="{{ url_for('question.admin_learning_list') }}"
-            class="block p-8 bg-white rounded-lg shadow-md border border-zinc-200 hover:shadow-lg hover:border-zinc-300 transition group">
-            <h2 class="text-2xl font-semibold mb-2 text-zinc-800 group-hover:text-zinc-900">Learning Questions</h2>
-            <p class="text-zinc-600">Manage speaking and writing practice questions for learning mode.</p>
-        </a>
-
-        <a href="{{ url_for('question.admin_test_list') }}"
-            class="block p-8 bg-white rounded-lg shadow-md border border-zinc-200 hover:shadow-lg hover:border-zinc-300 transition group">
-            <h2 class="text-2xl font-semibold mb-2 text-zinc-800 group-hover:text-zinc-900">Test Questions</h2>
-            <p class="text-zinc-600">Manage simulation test questions for assessment mode.</p>
-        </a>
+<!-- Stats Grid -->
+<div
+  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4 mb-10"
+>
+  <div
+    class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col"
+  >
+    <span
+      class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1"
+      >Total Users</span
+    >
+    <span class="text-2xl font-bold text-zinc-900">{{ stats.users }}</span>
+    <div class="mt-auto pt-2 text-xs text-blue-600 font-medium">
+      <a href="{{ url_for('admin.users') }}">Manage Users &rarr;</a>
     </div>
+  </div>
+  <div
+    class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col"
+  >
+    <span
+      class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1"
+      >Lessons</span
+    >
+    <span class="text-2xl font-bold text-zinc-900">{{ stats.lessons }}</span>
+    <div class="mt-auto pt-2 text-xs text-blue-600 font-medium">
+      <a href="{{ url_for('admin.learning') }}">Manage Content &rarr;</a>
+    </div>
+  </div>
+  <div
+    class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col"
+  >
+    <span
+      class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1"
+      >Quizzes</span
+    >
+    <span class="text-2xl font-bold text-zinc-900">{{ stats.quizzes }}</span>
+    <div class="mt-auto pt-2 text-xs text-blue-600 font-medium">
+      <a href="{{ url_for('admin.quiz') }}">Manage Quizzes &rarr;</a>
+    </div>
+  </div>
+  <div
+    class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col"
+  >
+    <span
+      class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1"
+      >Tests</span
+    >
+    <span class="text-2xl font-bold text-zinc-900">{{ stats.tests }}</span>
+    <div class="mt-auto pt-2 text-xs text-blue-600 font-medium">
+      <a href="{{ url_for('admin.tests') }}">Manage Tests &rarr;</a>
+    </div>
+  </div>
+  <div
+    class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col"
+  >
+    <span
+      class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1"
+      >Sessions</span
+    >
+    <span class="text-2xl font-bold text-zinc-900">{{ stats.sessions }}</span>
+    <div class="mt-auto pt-2 text-xs text-zinc-400">
+      Total full length tests
+    </div>
+  </div>
+  <div
+    class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col"
+  >
+    <span
+      class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1"
+      >Attempts</span
+    >
+    <span class="text-2xl font-bold text-zinc-900">{{ stats.attempts }}</span>
+    <div class="mt-auto pt-2 text-xs text-zinc-400">
+      Individual task attempts
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <!-- Recent Users -->
+  <div
+    class="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden"
+  >
+    <div
+      class="px-6 py-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50"
+    >
+      <h3 class="font-bold text-zinc-900">Recently Joined Users</h3>
+      <a
+        href="{{ url_for('admin.users') }}"
+        class="text-xs font-semibold text-zinc-500 hover:text-zinc-900"
+        >View All</a
+      >
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr
+            class="text-zinc-400 text-xs uppercase tracking-wider border-b border-zinc-50"
+          >
+            <th class="px-6 py-3 font-semibold">User</th>
+            <th class="px-6 py-3 font-semibold text-right">Joined</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-50">
+          {% for user in recent_users %}
+          <tr class="hover:bg-zinc-50/50 transition">
+            <td class="px-6 py-4">
+              <div class="text-sm font-medium text-zinc-900">
+                {{ user.username }}
+              </div>
+              <div class="text-xs text-zinc-500">{{ user.email }}</div>
+            </td>
+            <td class="px-6 py-4 text-xs text-zinc-500 text-right">
+              {{ user.created_at.strftime('%b %d, %H:%M') }}
+            </td>
+          </tr>
+          {% endfor %} {% if not recent_users %}
+          <tr>
+            <td colspan="2" class="px-6 py-8 text-center text-sm text-zinc-400">
+              No users yet
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Sessions -->
+  <div
+    class="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden"
+  >
+    <div
+      class="px-6 py-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50"
+    >
+      <h3 class="font-bold text-zinc-900">Recent Test Sessions</h3>
+      <span class="text-xs font-semibold text-zinc-400">Last 5</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr
+            class="text-zinc-400 text-xs uppercase tracking-wider border-b border-zinc-50"
+          >
+            <th class="px-6 py-3 font-semibold">User</th>
+            <th class="px-6 py-3 font-semibold">Score</th>
+            <th class="px-6 py-3 font-semibold text-right">Date</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-50">
+          {% for session in recent_sessions %}
+          <tr class="hover:bg-zinc-50/50 transition">
+            <td class="px-6 py-4">
+              <div class="text-sm font-medium text-zinc-900">
+                {{ session.user.username }}
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <span
+                class="px-2 py-1 rounded-md text-xs font-bold {% if session.total_score >= 4 %}bg-green-100 text-green-700{% elif session.total_score >= 3 %}bg-yellow-100 text-yellow-700{% else %}bg-zinc-100 text-zinc-700{% endif %}"
+              >
+                {{ "%.1f"|format(session.total_score) }}/5.0
+              </span>
+            </td>
+            <td class="px-6 py-4 text-xs text-zinc-500 text-right">
+              {{ session.started_at.strftime('%b %d, %H:%M') }}
+            </td>
+          </tr>
+          {% endfor %} {% if not recent_sessions %}
+          <tr>
+            <td colspan="3" class="px-6 py-8 text-center text-sm text-zinc-400">
+              No sessions recorded
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 {% endblock %}

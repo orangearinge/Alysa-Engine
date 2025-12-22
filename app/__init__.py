@@ -13,6 +13,7 @@ from app.routes.ocr import ocr_bp
 from app.routes.question import question_bp
 from app.routes.test import test_bp
 from app.routes.user import user_bp
+from app.routes.admin import admin_bp
 from config import Config
 
 # Import Firebase initialization
@@ -43,6 +44,7 @@ def create_app():
     app.register_blueprint(ocr_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(question_bp)
+    app.register_blueprint(admin_bp)
 
     # Health check route
     @app.route('/api/health', methods=['GET'])

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              zinc: {
+                50: "#fafafa",
+                100: "#f4f4f5",
+                200: "#e4e4e7",
+                300: "#d4d4d8",
+                400: "#a1a1aa",
+                500: "#71717a",
+                600: "#52525b",
+                700: "#3f3f46",
+                800: "#27272a",
+                900: "#18181b",
+              },
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-zinc-100 min-h-screen text-zinc-900 font-sans">
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-zinc-900 text-zinc-100 flex-shrink-0">
+        <div class="p-6 border-b border-zinc-800">
+          <h1 class="text-xl font-bold">Admin Panel</h1>
+        </div>
+        <nav class="p-4 space-y-1">
+          <a
+            href="{{ url_for('admin.dashboard') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {% if request.endpoint == 'admin.dashboard' %}text-zinc-100{% else %}text-zinc-500 hover:text-zinc-300{% endif %}"
+            >Dashboard</a
+          >
+          <a
+            href="{{ url_for('admin.users') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {% if request.endpoint == 'admin.users' %}text-zinc-100{% else %}text-zinc-500 hover:text-zinc-300{% endif %}"
+            >Users</a
+          >
+          <a
+            href="{{ url_for('admin.learning') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {% if request.endpoint == 'admin.learning' or 'learning' in request.endpoint %}text-zinc-100{% else %}text-zinc-500 hover:text-zinc-300{% endif %}"
+            >Learning</a
+          >
+          <a
+            href="{{ url_for('admin.quiz') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {% if request.endpoint == 'admin.quiz' or 'quiz' in request.endpoint %}text-zinc-100{% else %}text-zinc-500 hover:text-zinc-300{% endif %}"
+            >Quizzes</a
+          >
+          <a
+            href="{{ url_for('admin.tests') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {% if request.endpoint == 'admin.tests' or 'test' in request.endpoint %}text-zinc-100{% else %}text-zinc-500 hover:text-zinc-300{% endif %}"
+            >Tests</a
+          >
+          <div class="border-t border-zinc-800 my-4"></div>
+          <a
+            href="{{ url_for('admin.logout') }}"
+            class="block p-3 rounded hover:bg-zinc-800 transition text-red-400 hover:text-red-300"
+            >Logout</a
+          >
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 p-8 overflow-y-auto">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+        <div class="mb-6 space-y-2">
+          {% for category, message in messages %}
+          <div
+            class="p-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-800 border-l-4 border-red-500{% else %}bg-green-100 text-green-800 border-l-4 border-green-500{% endif %}"
+          >
+            {{ message }}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %} {% endwith %} {% block content %}{% endblock %}
+      </main>
+    </div>
+  </body>
+</html>
