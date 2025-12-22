@@ -71,7 +71,7 @@ Text: {ocr_text}
 def query_gemini(prompt: str):
     """Kirim prompt ke Gemini dan kembalikan hasil teks mentah."""
     response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         contents=prompt
     )
     return response.text.strip()
