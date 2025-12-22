@@ -56,3 +56,58 @@ def ocr_translate():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+@ocr_bp.route('/api/user/ocr-history', methods=['GET'])
+@jwt_required()
+def get_ocr_history():
+    """
+    Get OCR translation history for the authenticated user
+    Query params:
+    - page: page number (default: 1)
+    - per_page: items per page (default: 20, max: 100)
+    """
+    try:
+        user_id = int(get_jwt_identity())
+        
+        # Get pagination parameters
+        page = request.args.get('page', 1, type=int)
+        per_page = min(request.args.get('per_page', 20, type=int), 100)
+        
+        # Query OCR translations for this user, ordered by most recent first
+        pagination = OCRTranslation.query.filter_by(user_id=user_id)\
+            .order_by(OCRTranslation.created_at.desc())\
+            .paginate(page=page, per_page=per_page, error_out=False)
+        
+        # Format the results
+        history = []
+        for record in pagination.items:
+            try:
+                # Parse the JSON result
+                result_data = json.loads(record.translated_and_explained)
+                
+                history.append({
+                    'id': record.id,
+                    'translation': result_data.get('translation', ''),
+                    'sentence_analysis': result_data.get('sentence_analysis', []),
+                    'detected_language': result_data.get('detected_language', ''),
+                    'created_at': record.created_at.isoformat() if record.created_at else None,
+                })
+            except json.JSONDecodeError:
+                # If JSON parsing fails, skip this record
+                continue
+        
+        return jsonify({
+            'history': history,
+            'pagination': {
+                'page': pagination.page,
+                'per_page': pagination.per_page,
+                'total_pages': pagination.pages,
+                'total_items': pagination.total,
+                'has_next': pagination.has_next,
+                'has_prev': pagination.has_prev,
+            }
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
