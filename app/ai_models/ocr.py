@@ -12,7 +12,7 @@ from PIL import Image
 # KONFIGURASI API & SSL
 ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
 
-client = genai.Client()
+client = None
 reader = easyocr.Reader(['id', 'en'])
 
 
@@ -70,6 +70,10 @@ Text: {ocr_text}
 
 def query_gemini(prompt: str):
     """Kirim prompt ke Gemini dan kembalikan hasil teks mentah."""
+    global client
+    if client is None:
+        client = genai.Client()
+        
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt

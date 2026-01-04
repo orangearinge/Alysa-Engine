@@ -182,160 +182,252 @@ def populate_sample_data():
     try:
         with app.app_context():
             # Check if Lessons already exist to avoid duplication
-            if Lesson.query.first():
-                print("Lesson data already exists. Skipping population.")
-                return True
+            # Note: For development/testing of this script, you might want to remove this check or clear DB
+            # if Lesson.query.first():
+            #    print("Lesson data already exists. Skipping population.")
+            #    return True
 
             print("Populating Quizzes and Lessons...")
 
-            # 1. Create Quizzes
-            q1 = Quiz(id='q1', title='Speaking Basics Quiz')
-            db.session.merge(q1)
-            
-            q1_questions = [
-                QuizQuestion(
-                    quiz_id='q1',
-                    question_text='How many parts are there in the Speaking test?',
-                    options=json.dumps(['1', '2', '3', '4']),
-                    correct_option_index=2
-                ),
-                QuizQuestion(
-                    quiz_id='q1',
-                    question_text='How long does the Speaking test last?',
-                    options=json.dumps(['4-5 minutes', '11-14 minutes', '30 minutes', '1 hour']),
-                    correct_option_index=1
-                )
+            # --- 1. Create Quizzes & Questions ---
+            quizzes_data = [
+                # Speaking Quizzes
+                ('q1', 'Speaking Basics Quiz', [
+                    ('How many parts are there in the Speaking test?', ['1', '2', '3', '4'], 2),
+                    ('How long does the Speaking test last?', ['4-5 minutes', '11-14 minutes', '30 minutes', '1 hour'], 1)
+                ]),
+                ('q_s2', 'Speaking Part 2 Strategies Quiz', [
+                    ('What is the best way to use the 1-minute preparation time?', ['Write full sentences', 'Write nothing', 'Write keywords and structure', 'Memorize a script'], 2),
+                    ('Which structure is recommended for the long turn?', ['Past -> Present -> Future', 'Random thoughts', 'Just the conclusion', 'Only the present'], 0)
+                ]),
+                ('q_s3', 'Speaking Part 1 Topics Quiz', [
+                    ('Which topic is NOT common in Part 1?', ['Hometown', 'Work/Studies', 'Nuclear Physics', 'Hobbies'], 2),
+                    ('How should you answer Part 1 questions?', ['With one word', 'With natural, full sentences', 'With a prepared speech', 'By asking the examiner questions'], 1)
+                ]),
+                ('q_s4', 'Fluency & Coherence Quiz', [
+                    ('What are "fillers"?', ['Words to waste time', 'Natural pauses like "Well..."', 'Silent moments', 'Incorrect grammar'], 1),
+                    ('How can you improve coherence?', ['Speak very fast', 'Use linking words', 'Shout', 'Repeat the same word'], 1)
+                ]),
+                # Writing Quizzes
+                ('q_w1', 'Writing Task 1 Quiz', [
+                    ('What does a bar chart show?', ['A process', 'Comparison between categories', 'Locations on a map', 'A story'], 1),
+                    ('Which word indicates an upward trend?', ['Decrease', 'Plummet', 'Increase', 'Stabilize'], 2)
+                ]),
+                ('q_w2', 'Writing Task 2 Quiz', [
+                    ('How many paragraphs should a standard essay have?', ['1', '2', '4-5', '10'], 2),
+                    ('Where should the thesis statement be?', ['In the conclusion', 'In the introduction', 'In body paragraph 1', 'Nowhere'], 1)
+                ]),
+                ('q_w3', 'Letter Writing Quiz', [
+                    ('How do you start a formal letter?', ['Hi mate,', 'Dear Sir/Madam,', 'Hey there,', 'Yo,'], 1),
+                    ('What is the tone for a letter to a friend?', ['Formal', 'Academic', 'Informal', 'Aggressive'], 2)
+                ]),
+                ('q_w4', 'Writing Vocabulary Quiz', [
+                    ('Which is a linking word?', ['Apple', 'However', 'Run', 'Big'], 1),
+                    ('Why use academic vocabulary?', ['To sound confusing', 'To boost your score', 'To annoy the examiner', 'It is not necessary'], 1)
+                ]),
+                # Listening Quizzes
+                ('q_li1', 'Listening Details Quiz', [
+                    ('What should you listen for?', ['General vibes', 'Specific details like names/numbers', 'Background noise', 'The examiner\'s accent'], 1),
+                    ('Is spelling important?', ['No', 'Yes, very important', 'Only sometimes', 'Who knows?'], 1)
+                ]),
+                ('q_li2', 'Predicting Answers Quiz', [
+                    ('What can help you predict the answer?', ['Grammar clues & context', 'Guessing randomly', 'Closing your eyes', 'Ignoring the audio'], 0),
+                    ('If you see "a" before a blank, the answer is usually:', ['Plural noun', 'Singular noun', 'Verb', 'Adjective'], 1)
+                ]),
+                ('q_li3', 'Listening Accents Quiz', [
+                    ('Which accent emphasizes the "r" sound?', ['British', 'Australian', 'American', 'None'], 2),
+                    ('Why practice different accents?', ['To become an actor', 'To be prepared for variety in the test', 'It is fun', 'No reason'], 1)
+                ]),
+                ('q_li4', 'Map Labeling Quiz', [
+                    ('What language is key for maps?', ['Colors', 'Directional (North, South, etc.)', 'Food', 'Emotion'], 1),
+                    ('Where is "North" usually on a map?', ['Top', 'Bottom', 'Left', 'Right'], 0)
+                ]),
+                # Reading Quizzes
+                ('q_r1', 'Skimming Quiz', [
+                    ('What is skimming?', ['Reading every word', 'Reading for main ideas', 'Skipping the text', 'Reading aloud'], 1),
+                    ('Where is the main idea often found?', ['Middle of paragraph', 'First/Last sentences', 'Footnotes', 'Title only'], 1)
+                ]),
+                ('q_r2', 'Scanning Quiz', [
+                    ('What are you looking for when scanning?', ['General understanding', 'Specific keywords (names, dates)', 'Grammar mistakes', 'Funny jokes'], 1),
+                    ('Do you need to read every word to scan?', ['Yes', 'No', 'Maybe', 'Always'], 1)
+                ]),
+                ('q_r3', 'T/F/NG Quiz', [
+                    ('What does "False" mean?', ['Not mentioned', 'Opposite of text', 'Same as text', 'Confusing'], 1),
+                    ('What does "Not Given" mean?', ['Information is missing', 'Information is wrong', 'Information is correct', 'Information is a lie'], 0)
+                ]),
+                ('q_r4', 'Matching Headings Quiz', [
+                   ('What should you focus on?', ['Small details', 'Main idea of the paragraph', 'The first word', 'The length of the paragraph'], 1),
+                   ('Are keywords always reliable?', ['Yes', 'No, they can be synonyms', 'Always', 'Never'], 1)
+                ])
             ]
-            for q in q1_questions:
-                 db.session.add(q)
 
-            # 2. Create Lessons
-            
+            for q_id, q_title, q_questions in quizzes_data:
+                quiz = Quiz(id=q_id, title=q_title)
+                db.session.merge(quiz)
+                # Clear existing questions if re-running/updating
+                QuizQuestion.query.filter_by(quiz_id=q_id).delete()
+                for q_text, q_opts, q_correct in q_questions:
+                    db.session.add(QuizQuestion(
+                        quiz_id=q_id,
+                        question_text=q_text,
+                        options=json.dumps(q_opts),
+                        correct_option_index=q_correct
+                    ))
+
+            # --- 2. Create Lessons ---
+            # Helper to create lesson with section
+            def create_lesson(lid, title, desc, cat, dur, sections_data):
+                lesson = Lesson(id=lid, title=title, description=desc, category=cat, duration_minutes=dur)
+                db.session.merge(lesson)
+                # We delete old sections for simplicity in this dev script
+                LessonSection.query.filter_by(lesson_id=lid).delete()
+                for sec_title, sec_content, sec_quiz in sections_data:
+                    db.session.add(LessonSection(lesson_id=lid, title=sec_title, content=sec_content, quiz_id=sec_quiz))
+
             # SPEAKING
-            l1 = Lesson(id='1', title='Introduction to IELTS Speaking', description='Learn the basics of the Speaking test format.', category='Speaking', duration_minutes=15)
-            db.session.merge(l1)
-            l1_sections = [
-                LessonSection(lesson_id='1', title='Overview', content='The IELTS Speaking test consists of 3 parts and lasts 11-14 minutes. It is a face-to-face interview with an examiner.'),
-                LessonSection(lesson_id='1', title='Part 1: Introduction and Interview', content='In this part, the examiner asks you general questions about yourself...'),
-                LessonSection(lesson_id='1', title='Part 2: Long Turn', content='You will be given a card which asks you to talk about a particular topic...'),
-                LessonSection(lesson_id='1', title='Quiz: Speaking Basics', quiz_id='q1')
-            ]
-            
-            l2 = Lesson(id='s2', title='Speaking Part 2 Strategies', description='Master the "Long Turn" with effective note-taking.', category='Speaking', duration_minutes=15)
-            db.session.merge(l2)
-            l2_sections = [
-                LessonSection(lesson_id='s2', title='Using the 1 Minute Preparation', content='Don\'t write full sentences. Write keywords and structure your talk.'),
-                LessonSection(lesson_id='s2', title='Structure Your Talk', content='Introduction -> Past -> Present -> Future -> Conclusion/Opinion.')
-            ]
-
-            l3 = Lesson(id='s3', title='Common Topics in Speaking Part 1', description='Prepare fo questions about home, work, and hobbies.', category='Speaking', duration_minutes=10)
-            db.session.merge(l3)
-            l3_sections = [
-                 LessonSection(lesson_id='s3', title='Home & Hometown', content='Be ready to describe your room, house, or neighborhood.'),
-                 LessonSection(lesson_id='s3', title='Work & Studies', content='Know the vocabulary for your major or job role.')
-            ]
-
-            l4 = Lesson(id='s4', title='Improving Fluency & Coherence', description='Speak naturally without too many pauses.', category='Speaking', duration_minutes=20)
-            db.session.merge(l4)
-            l4_sections = [
-                 LessonSection(lesson_id='s4', title='Fillers', content='Use natural fillers like "Well...", "Actually...", "To be honest..." instead of "Umm".')
-            ]
+            create_lesson('1', 'Introduction to IELTS Speaking', 'Learn the basics of the Speaking test format.', 'Speaking', 15, [
+                ('Overview', 'The IELTS Speaking test consists of 3 parts and lasts 11-14 minutes. It is a face-to-face interview with an examiner.', None),
+                ('Part 1: Introduction', 'General questions about yourself.', None),
+                ('Part 2: Long Turn', 'Speak on a topic for 1-2 minutes.', None),
+                ('Quiz: Speaking Basics', 'Test your knowledge.', 'q1')
+            ])
+            create_lesson('s2', 'Speaking Part 2 Strategies', 'Master the "Long Turn" with effective note-taking.', 'Speaking', 15, [
+                ('Preparation', 'Use the 1 minute wisely for keywords.', None),
+                ('Structure', 'Intro -> Past -> Present -> Future', None),
+                ('Quiz: Strategies', 'Check understanding.', 'q_s2')
+            ])
+            create_lesson('s3', 'Common Topics in Speaking Part 1', 'Prepare for questions about home, work, and hobbies.', 'Speaking', 10, [
+                ('Home & Hometown', 'Describe your living situation.', None),
+                ('Work & Studies', 'Vocabulary for your occupation.', None),
+                ('Quiz: Topics', 'Review common topics.', 'q_s3')
+            ])
+            create_lesson('s4', 'Improving Fluency & Coherence', 'Speak naturally without too many pauses.', 'Speaking', 20, [
+                ('Fillers', 'Use "Actually", "Well" instead of silence.', None),
+                ('Linking', 'Connect ideas logically.', None),
+                ('Quiz: Fluency', 'Test fluency concepts.', 'q_s4')
+            ])
 
             # WRITING
-            w1 = Lesson(id='2', title='Writing Task 1: Charts', description='How to describe bar charts effectively.', category='Writing', duration_minutes=25)
-            db.session.merge(w1)
-            w1_sections = [
-                 LessonSection(lesson_id='2', title='Understanding Bar Charts', content='Bar charts show comparison between categories.'),
-                 LessonSection(lesson_id='2', title='Key Vocabulary', content='Use words like "increase", "decrease", "fluctuate".'),
-                 LessonSection(lesson_id='2', title='Quiz: Bar Charts', quiz_id='q1') # Reusing q1 for demo
-            ]
-            
-            w2 = Lesson(id='w2', title='Writing Task 2: Essay Structures', description='Organize your opinion or argument essays clearly.', category='Writing', duration_minutes=30)
-            db.session.merge(w2)
-            w2_sections = [
-                LessonSection(lesson_id='w2', title='4-Paragraph Structure', content='Intro, Body 1, Body 2, Conclusion.'),
-                LessonSection(lesson_id='w2', title='Thesis Statement', content='Clearly state your position in the introduction.')
-            ]
-
-            w3 = Lesson(id='w3', title='Letter Writing (General Training)', description='Formal vs Informal letters.', category='Writing', duration_minutes=20)
-            db.session.merge(w3)
-            w3_sections = [
-                LessonSection(lesson_id='w3', title='Formal Openings', content='"Dear Sir/Madam,"'),
-                LessonSection(lesson_id='w3', title='Informal Openings', content='"Hi John,"')
-            ]
-
-            w4 = Lesson(id='w4', title='Vocabulary for Writing', description='Academic words to boost your score.', category='Writing', duration_minutes=15)
-            db.session.merge(w4)
-            w4_sections = [
-                LessonSection(lesson_id='w4', title='Linking Words', content='Furthermore, However, Consequently.')
-            ]
+            create_lesson('2', 'Writing Task 1: Charts', 'How to describe bar charts effectively.', 'Writing', 25, [
+                ('Understanding Charts', 'identify the main trends.', None),
+                ('Vocabulary', 'Increase, decrease, remain steady.', None),
+                ('Quiz: Charts', 'Test Task 1 skills.', 'q_w1')
+            ])
+            create_lesson('w2', 'Writing Task 2: Essay Structures', 'Organize your opinion or argument essays clearly.', 'Writing', 30, [
+                ('Structure', '4 paragraphs: Intro, 2 Body, Conclusion.', None),
+                ('Thesis', 'State opinion clearly.', None),
+                ('Quiz: Essays', 'Review structure.', 'q_w2')
+            ])
+            create_lesson('w3', 'Letter Writing (General Training)', 'Formal vs Informal letters.', 'Writing', 20, [
+                ('Formal', 'Dear Sir/Madam, Yours faithfully.', None),
+                ('Informal', 'Hi John, Best wishes.', None),
+                ('Quiz: Letters', 'Check letter styles.', 'q_w3')
+            ])
+            create_lesson('w4', 'Vocabulary for Writing', 'Academic words to boost your score.', 'Writing', 15, [
+                ('Linking Words', 'Furthermore, However.', None),
+                ('Lexical Resource', 'Use precise vocabulary.', None),
+                ('Quiz: Vocab', 'Vocabulary check.', 'q_w4')
+            ])
 
             # LISTENING
-            li1 = Lesson(id='3', title='Listening for Details', description='Techniques to catch specific information.', category='Listening', duration_minutes=20)
-            db.session.merge(li1)
-            li1_sections = [
-                LessonSection(lesson_id='3', title='Names and Numbers', content='Practice listening for spelling of names and long numbers.')
-            ]
-
-            li2 = Lesson(id='l2', title='Predicting Answers', description='Use context to guess the type of word needed.', category='Listening', duration_minutes=20)
-            db.session.merge(li2)
-            li2_sections = [
-                 LessonSection(lesson_id='l2', title='Grammar Clues', content='If there is "a" or "an" before the blank, you know it is a singular noun.')
-            ]
-
-            li3 = Lesson(id='l3', title='Listening to Accents', description='Familiarize yourself with British, Australian, and American accents.', category='Listening', duration_minutes=15)
-            db.session.merge(li3)
-            li3_sections = [
-                LessonSection(lesson_id='l3', title='The "R" Sound', content='American English emphasizes the "r".')
-            ]
-
-            li4 = Lesson(id='l4', title='Map Labeling', description='Navigating directions in Listening Section 2.', category='Listening', duration_minutes=25)
-            db.session.merge(li4)
-            li4_sections = [
-                LessonSection(lesson_id='l4', title='Directional Language', content='North, South, East, West, across from, next to.')
-            ]
+            create_lesson('3', 'Listening for Details', 'Techniques to catch specific information.', 'Listening', 20, [
+                ('Focus', 'Listen for names, numbers, places.', None),
+                ('Quiz: Details', 'Test detail listening.', 'q_li1')
+            ])
+            create_lesson('l2', 'Predicting Answers', 'Use context to guess the type of word needed.', 'Listening', 20, [
+                ('Context Clues', 'Grammar helps predict noun/verb.', None),
+                ('Quiz: Prediction', 'Prediction skills.', 'q_li2')
+            ])
+            create_lesson('l3', 'Listening to Accents', 'Familiarize with British, Australian, and American accents.', 'Listening', 15, [
+                ('Varieties', 'Note differences in vowel sounds and "r".', None),
+                ('Quiz: Accents', 'Accent knowledge.', 'q_li3')
+            ])
+            create_lesson('l4', 'Map Labeling', 'Navigating directions in Listening Section 2.', 'Listening', 25, [
+                ('Directions', 'North, South, next to, opposite.', None),
+                ('Quiz: Maps', 'Map skills.', 'q_li4')
+            ])
 
             # READING
-            r1 = Lesson(id='4', title='Reading Skimming Techniques', description='Read faster and find answers quicker.', category='Reading', duration_minutes=30)
-            db.session.merge(r1)
-            r1_sections = [
-                LessonSection(lesson_id='4', title='Read First and Last Sentences', content='Topic sentences often contain the main idea.')
-            ]
-
-            r2 = Lesson(id='r2', title='Scanning for Keywords', description='Locate information without reading every word.', category='Reading', duration_minutes=15)
-            db.session.merge(r2)
-            r2_sections = [
-                LessonSection(lesson_id='r2', title='Proper Nouns and Dates', content='Scan for capital letters and numbers.')
-            ]
-            
-            r3 = Lesson(id='r3', title='True, False, Not Given', description='Strategies to handle this tricky question type.', category='Reading', duration_minutes=25)
-            db.session.merge(r3)
-            r3_sections = [
-                LessonSection(lesson_id='r3', title='Not Given vs False', content='False means the text says the opposite. Not Given means missing info.')
-            ]
-
-            r4 = Lesson(id='r4', title='Matching Headings', description='Match the correct heading to paragraphs.', category='Reading', duration_minutes=20)
-            db.session.merge(r4)
-            r4_sections = [
-                 LessonSection(lesson_id='r4', title='Don\'t rely on flexible keywords', content='Focus on the main idea.')
-            ]
-
-            # Collect all sections
-            all_sections = l1_sections + l2_sections + l3_sections + l4_sections + \
-                           w1_sections + w2_sections + w3_sections + w4_sections + \
-                           li1_sections + li2_sections + li3_sections + li4_sections + \
-                           r1_sections + r2_sections + r3_sections + r4_sections
-                           
-            for s in all_sections:
-                db.session.add(s)
+            create_lesson('4', 'Reading Skimming Techniques', 'Read faster and find answers quicker.', 'Reading', 30, [
+                ('Skimming', 'Read first/last sentences for gist.', None),
+                ('Quiz: Skimming', 'Skimming check.', 'q_r1')
+            ])
+            create_lesson('r2', 'Scanning for Keywords', 'Locate information without reading every word.', 'Reading', 15, [
+                ('Scanning', 'Look for capital letters, numbers.', None),
+                ('Quiz: Scanning', 'Scanning check.', 'q_r2')
+            ])
+            create_lesson('r3', 'True, False, Not Given', 'Strategies to handle this tricky question type.', 'Reading', 25, [
+                ('Logic', 'False = Contradiction, NG = Missing.', None),
+                ('Quiz: T/F/NG', 'Logic check.', 'q_r3')
+            ])
+            create_lesson('r4', 'Matching Headings', 'Match the correct heading to paragraphs.', 'Reading', 20, [
+                ('Headings', 'Summarize the main idea.', None),
+                ('Quiz: Headings', 'Heading check.', 'q_r4')
+            ])
 
             db.session.commit()
             print("Populated lessons and quizzes.")
             
-            # --- Populate legacy questions if needed ---
+            # --- 3. Populate Test Questions (Writing & Speaking) ---
+            # 20 Test Questions (10 Speaking, 10 Writing)
+            test_questions_data = [
+                # Speaking Part 1
+                ('Speaking', 'Part 1', 'What is your favorite color and why?', 'Personal preference, simple justification.', 'Red, Blue, cheerful, calm'),
+                ('Speaking', 'Part 1', 'Do you work or are you a student?', 'State current status clearly.', 'Student, Work, University, Job'),
+                ('Speaking', 'Part 1', 'How often do you use a computer?', 'Frequency phrases.', 'Every day, Rarely, For work'),
+                ('Speaking', 'Part 1', 'Do you like to travel?', 'Opinion + reason.', 'Yes, explore, culture, No, homebody'),
+                # Speaking Part 2
+                ('Speaking', 'Part 2', 'Describe a book you recently read. You should say: what it was, who wrote it, what it was about, and explain why you liked it.', 'Past tense narrative, description.', 'Novel, Author, Plot, Interesting'),
+                ('Speaking', 'Part 2', 'Describe a gift you gave to someone. You should say: what the gift was, who you gave it to, why you chose it, and how they reacted.', 'Past tense, emotions.', 'Present, Surprise, Happy'),
+                ('Speaking', 'Part 2', 'Describe a healthy habit you have. You should say: what it is, when you do it, how it helps you, and if you would recommend it.', 'Present simple, health vocab.', 'Exercise, Diet, Meditation'),
+                # Speaking Part 3
+                ('Speaking', 'Part 3', 'Do you think people today read enough books?', 'Abstract opinion, comparison.', 'Digital era, decline, knowledge'),
+                ('Speaking', 'Part 3', 'Is gift-giving important in your culture?', 'Cultural norms, values.', 'Tradition, Respect, Relationships'),
+                ('Speaking', 'Part 3', 'How can governments encourage healthy lifestyles?', 'Suggestions, policy.', 'Tax sugar, Parks, Education'),
+
+                # Writing Task 1
+                ('Writing', 'Task 1', 'The chart below shows the number of tourists visiting three different countries from 1995 to 2010. Summarize the information explicitly.', 'Comparison, trends, past tense.', 'Increase, Decrease, Fluctuate, Peak'),
+                ('Writing', 'Task 1', 'The diagram illustrates the process of making chocolate. Summarize the steps.', 'Passive voice, sequence connectors.', 'First, Then, Finally, Harvested, Processed'),
+                ('Writing', 'Task 1', 'The table compares the cost of water in 5 major cities in 2023.', 'Superlatives, comparatives.', 'Highest, Lowest, More expensive'),
+                ('Writing', 'Task 1', 'The map shows the changes in a village park between 2010 and 2020.', 'Location prepositions, change verbs.', 'Built, Demolished, Expanded'),
+                # Writing Task 2
+                ('Writing', 'Task 2', 'Some people believe that the internet has brought people closer together, while others think it has made us more isolated. Discuss both views and give your opinion.', 'Discussion, balance.', 'Communication, Social media, loneliness'),
+                ('Writing', 'Task 2', 'Education should be free for everyone. To what extent do you agree or disagree?', 'Argumentative, modals.', 'University, Cost, Opportunity, Tax'),
+                ('Writing', 'Task 2', 'Environmental problems are too big for individuals to solve. Only governments can handle them. Do you agree?', 'Agree/Disagree, environment.', 'Responsibility, Policy, Recycling'),
+                ('Writing', 'Task 2', 'In many countries, people are living longer. What are the advantages and disadvantages of this trend?', 'Pros/Cons.', 'Healthcare, Pension, Experience, Burden'),
+                ('Writing', 'Task 2', 'Children should be taught to manage money at school. Do you agree?', 'Education, life skills.', 'Curriculum, Finance, Future'),
+                ('Writing', 'Task 2', 'Should public transport be free? Discuss.', 'Opinion, urban planning.', 'Traffic, Pollution, Cost, Tax')
+            ]
+
             if not TestQuestion.query.first():
-                 # (Keep your existing standard test questions logic if desired, or skip for brevity if focus is Learning)
-                 pass
+                 print("Populating Test Questions...")
+                 for sec, t_type, prompt, ans, keys in test_questions_data:
+                     db.session.add(TestQuestion(
+                         section=sec,
+                         task_type=t_type,
+                         prompt=prompt,
+                         reference_answer=ans,
+                         keywords=keys
+                     ))
+                 db.session.commit()
+                 print("Test Questions populated.")
+            else:
+                 # Check if we need to add these specific ones (simple check: count)
+                 count = TestQuestion.query.count()
+                 if count < 20: 
+                      print("Adding missing Test Questions...")
+                      # Clear and re-add for simplicity in dev/init script
+                      TestQuestion.query.delete()
+                      for sec, t_type, prompt, ans, keys in test_questions_data:
+                           db.session.add(TestQuestion(
+                               section=sec,
+                               task_type=t_type,
+                               prompt=prompt,
+                               reference_answer=ans,
+                               keywords=keys
+                           ))
+                      db.session.commit()
+                      print("Test Questions updated.")
 
     except Exception as e:
         print(f"Error populating sample data: {e}")

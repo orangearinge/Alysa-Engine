@@ -3,6 +3,9 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
+# Load environment variables
+load_dotenv()
+
 # Import models and initialize database
 from app.models.database import db
 
@@ -18,9 +21,6 @@ from config import Config
 
 # Import Firebase initialization
 from app.firebase_config import initialize_firebase
-
-# Load environment variables
-load_dotenv()
 
 def create_app():
     """Application factory pattern"""

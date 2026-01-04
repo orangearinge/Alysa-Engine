@@ -282,3 +282,144 @@ def submit_test_answers():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@test_bp.route('/api/test/practice/start', methods=['POST'])
+@jwt_required()
+def start_practice_test():
+    """
+    Start a Practice Test session with 10 random questions (5 Writing, 5 Speaking).
+    """
+    try:
+        user_id = int(get_jwt_identity())
+        
+        # 1. Fetch random questions
+        # We need 5 Speaking and 5 Writing
+        speaking_questions = TestQuestion.query.filter(TestQuestion.section.ilike('speaking')).order_by(db.func.random()).limit(5).all()
+        writing_questions = TestQuestion.query.filter(TestQuestion.section.ilike('writing')).order_by(db.func.random()).limit(5).all()
+        
+        # Combine and shuffle
+        import random
+        all_questions = speaking_questions + writing_questions
+        random.shuffle(all_questions)
+        
+        # Ensure we have enough questions (handling dev env with few questions)
+        if not all_questions:
+             # Fallback if DB is small: just get what we have
+             all_questions = TestQuestion.query.order_by(db.func.random()).limit(10).all()
+
+        # Create new test session (Practice Mode)
+        test_session = TestSession(
+            user_id=user_id,
+            total_score=0.0,
+            ai_feedback='Practice Test in progress'
+        )
+        db.session.add(test_session)
+        db.session.commit()
+
+        # Format for response
+        questions_data = []
+        for i, q in enumerate(all_questions):
+            questions_data.append({
+                'id': i + 1, # Sequential ID for frontend
+                'question_id': q.id, # DB ID
+                'section': q.section, # 'Speaking' or 'Writing'
+                'prompt': q.prompt,
+                'task_type': q.task_type
+            })
+
+        return jsonify({
+            'message': 'Practice test started',
+            'session_id': test_session.id,
+            'questions': questions_data
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@test_bp.route('/api/test/practice/submit', methods=['POST'])
+@jwt_required()
+def submit_practice_test():
+    """
+    Submit Practice Test answers.
+    Expects list of answers. Evaluates each using Gemini and returns detailed feedback.
+    """
+    try:
+        user_id = int(get_jwt_identity())
+        data = request.get_json()
+
+        if not data or not data.get('session_id') or not data.get('answers'):
+             return jsonify({'error': 'Missing session_id or answers'}), 400
+
+        session_id = data.get('session_id')
+        answers = data.get('answers') # List of {question_id, answer, section}
+
+        # Find test session
+        session = TestSession.query.filter_by(id=session_id, user_id=user_id).first()
+        if not session:
+            return jsonify({'error': 'Test session not found'}), 404
+
+        # Import AI feedback
+        from app.ai_models.gemini import ai_toefl_feedback as gemini_feedback
+
+        total_score = 0
+        evaluated_count = 0
+        detailed_feedback_list = []
+        
+        # Process each answer
+        for ans in answers:
+            q_id = ans.get('question_id')
+            user_text = ans.get('answer', '').strip()
+            section = ans.get('section', 'General')
+            
+            if not user_text:
+                detailed_feedback_list.append({
+                    'question_id': q_id,
+                    'user_answer': '',
+                    'score': 0,
+                    'feedback': ['No answer provided.']
+                })
+                continue
+
+            # Evaluate with Gemini (Test Mode)
+            feedback_result = gemini_feedback(user_text, mode="test")
+            score = feedback_result.get('score', 0)
+            
+            total_score += score
+            evaluated_count += 1
+            
+            # Save simple record (could be improved with TestAnswer model relation if needed strictly)
+            test_answer = TestAnswer(
+                test_session_id=session.id,
+                section=section,
+                task_type='Practice', 
+                combined_question_ids=json.dumps([q_id]),
+                user_inputs=json.dumps([{'q_id': q_id, 'answer': user_text}]),
+                ai_feedback=json.dumps(feedback_result),
+                score=score
+            )
+            db.session.add(test_answer)
+
+            detailed_feedback_list.append({
+                'question_id': q_id,
+                'user_answer': user_text,
+                'score': score,
+                'feedback': feedback_result.get('feedback', [])
+            })
+
+        # Finalize Session
+        avg_score = total_score / evaluated_count if evaluated_count > 0 else 0
+        session.total_score = avg_score
+        session.finished_at = datetime.utcnow()
+        session.ai_feedback = json.dumps({'detailed_feedback': detailed_feedback_list})
+        
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Practice test evaluated',
+            'overall_score': round(avg_score, 1),
+            'results': detailed_feedback_list
+        }), 200
+
+    except Exception as e:
+        print(f"Error in practice submit: {e}")
+        return jsonify({'error': str(e)}), 500

@@ -33,9 +33,15 @@ def firebase_login():
         user = User.query.filter_by(email=email).first()
 
         if not user:
+            print(f"User with email {email} not found in DB. Creating new user...")
             # Create new user
             # Generate a username from email
             base_username = email.split('@')[0]
+            # Sanitize username (alphanumeric only)
+            base_username = "".join(c for c in base_username if c.isalnum())
+            if not base_username:
+                base_username = "user"
+            
             username = base_username
             counter = 1
             # Ensure username is unique
@@ -43,17 +49,25 @@ def firebase_login():
                 username = f"{base_username}{counter}"
                 counter += 1
 
-            new_user = User(
-                username=username,
-                email=email
-            )
+            try:
+                new_user = User(
+                    username=username,
+                    email=email
+                )
 
-            db.session.add(new_user)
-            db.session.commit()
-            user = new_user
+                db.session.add(new_user)
+                db.session.commit()
+                user = new_user
+                print(f"Successfully created new user: {username} ({email})")
+            except Exception as db_err:
+                print(f"Database error creating user: {db_err}")
+                db.session.rollback()
+                return jsonify({'error': f'Failed to create user record: {str(db_err)}'}), 500
 
         # Create access token (JWT)
         access_token = create_access_token(identity=str(user.id))
+        
+        print(f"Login successful for user: {user.username}")
 
         return jsonify({
             'message': 'Login successful',
