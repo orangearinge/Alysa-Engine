@@ -93,7 +93,7 @@ def get_quiz(quiz_id):
 
         quiz_data = {
             'id': quiz.id,
-            'title': quiz.tittle,
+            'title': quiz.title,
             'questions': questions_data
         }
 
