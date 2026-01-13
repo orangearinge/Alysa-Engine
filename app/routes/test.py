@@ -341,7 +341,8 @@ def start_practice_test():
 def submit_practice_test():
     """
     Submit Practice Test answers.
-    Expects list of answers. Evaluates each using Gemini and returns detailed feedback.
+    Submit Practice Test answers.
+    Expects list of answers. Evaluates each using Gemini or Alysa model.
     """
     try:
         user_id = int(get_jwt_identity())
@@ -352,14 +353,16 @@ def submit_practice_test():
 
         session_id = data.get('session_id')
         answers = data.get('answers') # List of {question_id, answer, section}
+        model_type = data.get('model', 'gemini').lower() # Default to gemini
 
         # Find test session
         session = TestSession.query.filter_by(id=session_id, user_id=user_id).first()
         if not session:
             return jsonify({'error': 'Test session not found'}), 404
 
-        # Import AI feedback
+        # Import AI feedback modules
         from app.ai_models.gemini import ai_toefl_feedback as gemini_feedback
+        from app.ai_models.Alysa.examiner import evaluate as alysa_evaluate
 
         total_score = 0
         evaluated_count = 0
@@ -380,8 +383,26 @@ def submit_practice_test():
                 })
                 continue
 
-            # Evaluate with Gemini (Test Mode)
-            feedback_result = gemini_feedback(user_text, mode="test")
+            # Evaluate Based on Model Selection
+            feedback_result = {}
+            score = 0
+
+            if model_type == 'alysa':
+                # Alysa Model requires Question Prompt + Answer
+                # We need to fetch the question prompt from DB
+                question = TestQuestion.query.get(q_id)
+                if question:
+                     # Use Alysa Model
+                     feedback_result = alysa_evaluate(question.prompt, user_text)
+                else:
+                     feedback_result = {
+                         'score': 0,
+                         'feedback': ["Error: Question not found for Alysa evaluation."]
+                     }
+            else:
+                # Default: Gemini Model (Test Mode) -> Only needs Answer
+                feedback_result = gemini_feedback(user_text, mode="test")
+            
             score = feedback_result.get('score', 0)
             
             total_score += score
@@ -391,7 +412,7 @@ def submit_practice_test():
             test_answer = TestAnswer(
                 test_session_id=session.id,
                 section=section,
-                task_type='Practice', 
+                task_type=f'Practice ({model_type.upper()})', 
                 combined_question_ids=json.dumps([q_id]),
                 user_inputs=json.dumps([{'q_id': q_id, 'answer': user_text}]),
                 ai_feedback=json.dumps(feedback_result),
