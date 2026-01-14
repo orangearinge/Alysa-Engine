@@ -39,6 +39,20 @@ def update_user_profile():
             
         data = request.get_json()
         
+        if 'username' in data and data['username'] is not None:
+            # Optional: check if username is already taken
+            existing_user = User.query.filter(User.username == data['username'], User.id != user_id).first()
+            if existing_user:
+                return jsonify({'error': 'Username already taken'}), 400
+            user.username = data['username']
+            
+        if 'email' in data and data['email'] is not None:
+            # Optional: check if email is already taken
+            existing_email = User.query.filter(User.email == data['email'], User.id != user_id).first()
+            if existing_email:
+                return jsonify({'error': 'Email already taken'}), 400
+            user.email = data['email']
+
         if 'target_score' in data:
             user.target_score = float(data['target_score'])
         if 'daily_study_time_minutes' in data:
