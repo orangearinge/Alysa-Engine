@@ -444,3 +444,65 @@ def submit_practice_test():
     except Exception as e:
         print(f"Error in practice submit: {e}")
         return jsonify({'error': str(e)}), 500
+
+@test_bp.route('/api/test/session/<int:session_id>', methods=['GET'])
+@jwt_required()
+def get_test_session_details(session_id):
+    """
+    Get detailed results for a specific test session.
+    """
+    try:
+        user_id = int(get_jwt_identity())
+        
+        # Verify session belongs to user
+        session = TestSession.query.filter_by(id=session_id, user_id=user_id).first()
+        if not session:
+            return jsonify({'error': 'Test session not found'}), 404
+
+        # Get answers
+        test_answers = TestAnswer.query.filter_by(test_session_id=session.id).all()
+        
+        answers_data = []
+        for answer in test_answers:
+            try:
+                display_q_ids = json.loads(answer.combined_question_ids) if answer.combined_question_ids else []
+            except json.JSONDecodeError:
+                display_q_ids = []
+
+            try:
+                display_inputs = json.loads(answer.user_inputs) if answer.user_inputs else []
+            except json.JSONDecodeError:
+                display_inputs = []
+
+            try:
+                display_feedback = json.loads(answer.ai_feedback) if answer.ai_feedback else {}
+            except json.JSONDecodeError:
+                display_feedback = {'message': str(answer.ai_feedback)}
+
+            answers_data.append({
+                'id': answer.id,
+                'section': answer.section,
+                'task_type': answer.task_type,
+                'score': answer.score,
+                'question_ids': display_q_ids,
+                'user_inputs': display_inputs,
+                'feedback': display_feedback
+            })
+        
+        # Safe load session feedback
+        try:
+            session_feedback = json.loads(session.ai_feedback) if session.ai_feedback else {}
+        except json.JSONDecodeError:
+             session_feedback = {'overall_feedback': str(session.ai_feedback)}
+
+        return jsonify({
+            'session_id': session.id,
+            'total_score': session.total_score,
+            'started_at': session.started_at.isoformat() if session.started_at else datetime.now().isoformat(),
+            'finished_at': session.finished_at.isoformat() if session.finished_at else None,
+            'feedback': session_feedback,
+            'test_answers': answers_data
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

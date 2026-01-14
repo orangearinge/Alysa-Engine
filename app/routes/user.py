@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -108,23 +109,46 @@ def get_user_test_sessions():
 
             test_answers_data = []
             for answer in test_answers:
+                # Safe load JSON for answers
+                try:
+                    display_q_ids = json.loads(answer.combined_question_ids) if answer.combined_question_ids else []
+                except json.JSONDecodeError:
+                    display_q_ids = []
+                
+                try:
+                    display_inputs = json.loads(answer.user_inputs) if answer.user_inputs else []
+                except json.JSONDecodeError:
+                    display_inputs = []
+                
+                try:
+                    display_feedback = json.loads(answer.ai_feedback) if answer.ai_feedback else {}
+                except json.JSONDecodeError:
+                    display_feedback = {'message': str(answer.ai_feedback)}
+
                 test_answers_data.append({
                     'id': answer.id,
                     'section': answer.section,
                     'task_type': answer.task_type,
                     'score': answer.score,
-                    'question_ids': json.loads(answer.combined_question_ids) if answer.combined_question_ids else [],
-                    'user_inputs': json.loads(answer.user_inputs) if answer.user_inputs else [],
-                    'feedback': json.loads(answer.ai_feedback) if answer.ai_feedback else {},
+                    'question_ids': display_q_ids,
+                    'user_inputs': display_inputs,
+                    'feedback': display_feedback,
                     'created_at': answer.created_at.isoformat()
                 })
+
+            # Safe load session feedback
+            try:
+                session_feedback = json.loads(session.ai_feedback) if session.ai_feedback else {}
+            except json.JSONDecodeError:
+                # Handle plain string case (e.g. "Test in progress")
+                session_feedback = {'overall_feedback': str(session.ai_feedback)}
 
             sessions_data.append({
                 'id': session.id,
                 'total_score': session.total_score,
-                'started_at': session.started_at.isoformat(),
+                'started_at': session.started_at.isoformat() if session.started_at else datetime.now().isoformat(), # Handle missing started_at if any
                 'finished_at': session.finished_at.isoformat() if session.finished_at else None,
-                'feedback': json.loads(session.ai_feedback) if session.ai_feedback else {},
+                'feedback': session_feedback,
                 'test_answers': test_answers_data
             })
 

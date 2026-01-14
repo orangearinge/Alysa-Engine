@@ -12,7 +12,7 @@ class User(db.Model):
     target_score = db.Column(db.Float, default=6.5)
     daily_study_time_minutes = db.Column(db.Integer, default=30)
     test_date = db.Column(db.DateTime)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
     # Relationships
     attempts = db.relationship('UserAttempt', backref='user', lazy=True)
@@ -28,7 +28,7 @@ class Lesson(db.Model):
     description = db.Column(db.Text)
     category = db.Column(db.String(50)) # Speaking, Writing, Reading, Listening
     duration_minutes = db.Column(db.Integer)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now)
     
     sections = db.relationship('LessonSection', backref='lesson', lazy=True, cascade="all, delete-orphan")
 
@@ -65,7 +65,7 @@ class UserLessonProgress(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     lesson_id = db.Column(db.String(50), db.ForeignKey('lessons.id'), nullable=False)
     is_completed = db.Column(db.Boolean, default=False)
-    last_accessed_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_accessed_at = db.Column(db.DateTime, default=datetime.now)
 
 # Keeping TestQuestion and related for the "Start Test" feature
 class TestQuestion(db.Model):
@@ -77,7 +77,7 @@ class TestQuestion(db.Model):
     prompt = db.Column(db.Text, nullable=False)
     reference_answer = db.Column(db.Text)  # optional
     keywords = db.Column(db.Text)  # JSON format
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
 class UserAttempt(db.Model):
     __tablename__ = 'user_attempts'
@@ -93,7 +93,7 @@ class UserAttempt(db.Model):
     user_input = db.Column(db.Text, nullable=False)
     ai_feedback = db.Column(db.Text, nullable=False)
     score = db.Column(db.Float, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
 class TestSession(db.Model):
     __tablename__ = 'test_sessions'
@@ -102,7 +102,7 @@ class TestSession(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     total_score = db.Column(db.Float, nullable=False)
     ai_feedback = db.Column(db.Text, nullable=False)
-    started_at = db.Column(db.DateTime, default=datetime.utcnow)
+    started_at = db.Column(db.DateTime, default=datetime.now)
     finished_at = db.Column(db.DateTime)
     
     test_answers = db.relationship('TestAnswer', backref='test_session', lazy=True)
@@ -118,7 +118,7 @@ class TestAnswer(db.Model):
     user_inputs = db.Column(db.Text, nullable=False)
     ai_feedback = db.Column(db.Text, nullable=False)
     score = db.Column(db.Float, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
 class OCRTranslation(db.Model):
     __tablename__ = 'ocr_translations'
