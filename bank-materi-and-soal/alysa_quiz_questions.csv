@@ -1,0 +1,61 @@
+id,quiz_id,question_text,options,correct_option_index
+1,quiz_sp1,What does fluency mainly refer to in IELTS Speaking?,"[""Speaking very fast"", ""Speaking continuously without unnatural pauses"", ""Using difficult vocabulary"", ""Speaking loudly""]",1
+2,quiz_sp1,Which word helps improve coherence?,"[""Apple"", ""However"", ""Beautiful"", ""Quickly""]",1
+3,quiz_sp1,Which sentence shows better fluency?,"[""I like... um... my hometown... because... it is nice"", ""I like my hometown because it is a peaceful place with friendly people"", ""My hometown nice"", ""Hometown is good place""]",1
+4,quiz_sp2,What is the most important aspect of pronunciation in IELTS?,"[""Having a British accent"", ""Having an American accent"", ""Being clearly understood"", ""Speaking like a native""]",2
+5,quiz_sp2,Which word has stress on the second syllable?,"[""PHOtograph"", ""phoTOgraphy"", ""Both A and B"", ""Neither""]",1
+6,quiz_sp2,What intonation pattern is used for yes/no questions?,"[""Falling intonation"", ""Rising intonation"", ""Flat intonation"", ""No intonation""]",1
+7,quiz_sp3,Which is a synonym for 'important'?,"[""Big"", ""Crucial"", ""Fast"", ""Happy""]",1
+8,quiz_sp3,What is the correct collocation?,"[""Do a decision"", ""Make a decision"", ""Have a decision"", ""Take a decision""]",1
+9,quiz_sp3,"What does 'hit the books' mean?","[""Throw books"", ""Study hard"", ""Buy books"", ""Hate reading""]",1
+10,quiz_sp4,Which sentence is grammatically complex?,"[""I like coffee"", ""Although it was raining I went for a walk"", ""She is tall"", ""They run fast""]",1
+11,quiz_sp4,Which tense is correct for experiences?,"[""Past Simple"", ""Present Perfect"", ""Future Simple"", ""Present Continuous""]",1
+12,quiz_sp4,What is the correct form?,"[""He go to school"", ""He goes to school"", ""He going to school"", ""He gone to school""]",1
+13,quiz_sp5,How long do you speak in Part 2?,"[""30 seconds"", ""1-2 minutes"", ""5 minutes"", ""10 minutes""]",1
+14,quiz_sp5,How much preparation time do you get in Part 2?,"[""30 seconds"", ""1 minute"", ""2 minutes"", ""No preparation time""]",1
+15,quiz_sp5,What should you write during preparation time?,"[""Full sentences"", ""Keywords and notes"", ""Nothing"", ""The entire speech""]",1
+16,quiz_wr1,How many words minimum for Task 1?,"[""100"", ""150"", ""250"", ""300""]",1
+17,quiz_wr1,How many words minimum for Task 2?,"[""150"", ""200"", ""250"", ""300""]",2
+18,quiz_wr1,Should you give your opinion in Task 1?,"[""Yes always"", ""No only report what you see"", ""Sometimes"", ""Only in conclusion""]",1
+19,quiz_wr2,What should every paragraph have?,"[""Only examples"", ""Topic sentence supporting sentences and conclusion"", ""Just one sentence"", ""Random ideas""]",1
+20,quiz_wr2,Which is a contrast linking word?,"[""Furthermore"", ""However"", ""Therefore"", ""For example""]",1
+21,quiz_wr2,How many linking words should you use per sentence maximum?,"[""Five"", ""One"", ""Ten"", ""None""]",1
+22,quiz_wr3,Which is more formal?,"[""Kids"", ""Children"", ""Kiddos"", ""Youngsters""]",1
+23,quiz_wr3,What should you avoid in academic writing?,"[""Formal vocabulary"", ""Contractions like don't"", ""Complex sentences"", ""Examples""]",1
+24,quiz_wr3,What is a paraphrase of 'increase'?,"[""Decrease"", ""Rise"", ""Fall"", ""Stop""]",1
+25,quiz_wr4,Which sentence shows variety?,"[""I like cats I like dogs I like birds"", ""Although I like cats I prefer dogs because they are loyal"", ""Cats good"", ""I like cats""]",1
+26,quiz_wr4,Which is an example of passive voice?,"[""I collected the data"", ""The data was collected in 2020"", ""They collect data"", ""We are collecting data""]",1
+27,quiz_wr4,What is a common article error?,"[""Using 'the' correctly"", ""Writing 'I am student' instead of 'I am a student'"", ""Using 'a' before vowels"", ""All articles are correct""]",1
+28,quiz_wr5,What structure is used for opinion essays?,"[""No structure needed"", ""Introduction Body paragraphs with reasons Conclusion"", ""Only introduction"", ""Only conclusion""]",1
+29,quiz_wr5,In discussion essays what must you do?,"[""Only discuss one view"", ""Discuss both views and give your opinion"", ""Give no opinion"", ""Only give opinion""]",1
+30,quiz_wr5,What should problem-solution essays include?,"[""Only problems"", ""Only solutions"", ""Both problems and solutions"", ""Neither problems nor solutions""]",2
+31,quiz_li1,What should you listen for when names are spelled?,"[""The meaning"", ""Letter-by-letter spelling and double letters"", ""The person's age"", ""Their address""]",1
+32,quiz_li1,How should you write phone numbers?,"[""In words"", ""In digits as you hear them"", ""Don't write them"", ""In Roman numerals""]",1
+33,quiz_li1,What does 'double seven' mean?,"[""7"", ""77"", ""14"", ""27""]",1
+34,quiz_li2,What helps you predict content before listening?,"[""The answer key"", ""Reading the context and understanding who is speaking"", ""Guessing randomly"", ""Nothing""]",1
+35,quiz_li2,What is the main idea?,"[""Every small detail"", ""The overall point or topic"", ""The first word"", ""The last word""]",1
+36,quiz_li2,Where is the main idea often found?,"[""In the middle of random sentences"", ""At the start repeated themes or summary statements"", ""Never mentioned"", ""Only in questions""]",1
+37,quiz_li3,What does 'opposite' mean in map directions?,"[""Next to"", ""Directly across from"", ""Behind"", ""Inside""]",1
+38,quiz_li3,What should you do if you get lost during a map question?,"[""Give up"", ""Skip ahead and catch the next landmark"", ""Stop listening"", ""Panic""]",1
+39,quiz_li3,What helps you track movements on a map?,"[""Closing your eyes"", ""Drawing arrows and marking landmarks"", ""Memorizing everything"", ""Ignoring directions""]",1
+40,quiz_li4,What should you check before listening to note completion?,"[""Nothing"", ""The word limit and type of word needed"", ""The weather"", ""Your phone""]",1
+41,quiz_li4,Should you change word forms in note completion?,"[""Yes always"", ""No write exactly what you hear"", ""Sometimes"", ""Only verbs""]",1
+42,quiz_li4,What must completed sentences be?,"[""Grammatically incorrect"", ""Grammatically correct and meaningful"", ""Very long"", ""Very short""]",1
+43,quiz_li5,When should you read multiple choice options?,"[""After listening"", ""Before listening"", ""Never"", ""During listening only""]",1
+44,quiz_li5,What are distractors?,"[""Correct answers"", ""Wrong answers designed to trick you"", ""Keywords"", ""Main ideas""]",1
+45,quiz_li5,What should you do if you miss a question?,"[""Stop the test"", ""Guess and move on"", ""Leave it blank"", ""Cry""]",1
+46,quiz_re1,What is skimming?,"[""Reading every word carefully"", ""Reading quickly to get the general idea"", ""Not reading at all"", ""Reading backwards""]",1
+47,quiz_re1,Where is the topic sentence usually located?,"[""In the middle"", ""First or second sentence of a paragraph"", ""Last sentence only"", ""Never exists""]",1
+48,quiz_re1,What should you read when skimming?,"[""Every single word"", ""Title headings first and last sentences"", ""Nothing"", ""Only pictures""]",1
+49,quiz_re2,What is scanning?,"[""Reading everything slowly"", ""Searching for specific information quickly"", ""Memorizing the text"", ""Translating the text""]",1
+50,quiz_re2,What should you look for when scanning?,"[""General ideas"", ""Capital letters numbers and keywords"", ""Grammar mistakes"", ""Beautiful sentences""]",1
+51,quiz_re2,Why are synonyms important in scanning?,"[""They are not important"", ""The text uses paraphrases not exact words from questions"", ""They make reading harder"", ""They confuse you""]",1
+52,quiz_re3,What does 'True' mean in True/False/Not Given?,"[""Your opinion agrees"", ""Statement matches or is clearly implied by the text"", ""Statement is interesting"", ""Statement is long""]",1
+53,quiz_re3,What does 'Not Given' mean?,"[""The statement is false"", ""Information is not mentioned or insufficient to confirm"", ""The statement is true"", ""The statement is confusing""]",1
+54,quiz_re3,What is a common mistake in True/False/Not Given?,"[""Reading carefully"", ""Using outside knowledge instead of only the text"", ""Following instructions"", ""Managing time well""]",1
+55,quiz_re4,What do headings represent?,"[""Minor details"", ""The main idea of paragraphs"", ""Examples only"", ""Nothing important""]",1
+56,quiz_re4,Are there usually more headings than paragraphs?,"[""No same number"", ""Yes some are distractors"", ""No fewer headings"", ""There are no headings""]",1
+57,quiz_re4,What should you focus on when matching headings?,"[""Keywords only"", ""The overall message and main idea"", ""The first word"", ""The paragraph length""]",1
+58,quiz_re5,What must you check in summary completion?,"[""Nothing"", ""Word limits and spelling"", ""Your opinion"", ""The time""]",1
+59,quiz_re5,Should you change word forms from the text?,"[""Yes always"", ""No copy exactly as they appear"", ""Sometimes"", ""Only for verbs""]",1
+60,quiz_re5,What happens if you exceed the word limit?,"[""Nothing"", ""Your answer is marked wrong"", ""You get bonus points"", ""The examiner is happy""]",1

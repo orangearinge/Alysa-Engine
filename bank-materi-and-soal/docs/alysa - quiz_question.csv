@@ -1,0 +1,33 @@
+id,quiz_id,question_text,options,correct_option_index
+1,q1,How many parts are there in the Speaking test?,"[""1"", ""2"", ""3"", ""4""]",2
+2,q1,How long does the Speaking test last?,"[""4-5 minutes"", ""11-14 minutes"", ""30 minutes"", ""1 hour""]",1
+3,q_s2,What is the best way to use the 1-minute preparation time?,"[""Write full sentences"", ""Write nothing"", ""Write keywords and structure"", ""Memorize a script""]",2
+4,q_s2,Which structure is recommended for the long turn?,"[""Past -> Present -> Future"", ""Random thoughts"", ""Just the conclusion"", ""Only the present""]",0
+5,q_s3,Which topic is NOT common in Part 1?,"[""Hometown"", ""Work/Studies"", ""Nuclear Physics"", ""Hobbies""]",2
+6,q_s3,How should you answer Part 1 questions?,"[""With one word"", ""With natural, full sentences"", ""With a prepared speech"", ""By asking the examiner questions""]",1
+7,q_s4,"What are ""fillers""?","[""Words to waste time"", ""Natural pauses like \""Well...\"""", ""Silent moments"", ""Incorrect grammar""]",1
+8,q_s4,How can you improve coherence?,"[""Speak very fast"", ""Use linking words"", ""Shout"", ""Repeat the same word""]",1
+9,q_w1,What does a bar chart show?,"[""A process"", ""Comparison between categories"", ""Locations on a map"", ""A story""]",1
+10,q_w1,Which word indicates an upward trend?,"[""Decrease"", ""Plummet"", ""Increase"", ""Stabilize""]",2
+11,q_w2,How many paragraphs should a standard essay have?,"[""1"", ""2"", ""4-5"", ""10""]",2
+12,q_w2,Where should the thesis statement be?,"[""In the conclusion"", ""In the introduction"", ""In body paragraph 1"", ""Nowhere""]",1
+13,q_w3,How do you start a formal letter?,"[""Hi mate,"", ""Dear Sir/Madam,"", ""Hey there,"", ""Yo,""]",1
+14,q_w3,What is the tone for a letter to a friend?,"[""Formal"", ""Academic"", ""Informal"", ""Aggressive""]",2
+15,q_w4,Which is a linking word?,"[""Apple"", ""However"", ""Run"", ""Big""]",1
+16,q_w4,Why use academic vocabulary?,"[""To sound confusing"", ""To boost your score"", ""To annoy the examiner"", ""It is not necessary""]",1
+17,q_li1,What should you listen for?,"[""General vibes"", ""Specific details like names/numbers"", ""Background noise"", ""The examiner's accent""]",1
+18,q_li1,Is spelling important?,"[""No"", ""Yes, very important"", ""Only sometimes"", ""Who knows?""]",1
+19,q_li2,What can help you predict the answer?,"[""Grammar clues & context"", ""Guessing randomly"", ""Closing your eyes"", ""Ignoring the audio""]",0
+20,q_li2,"If you see ""a"" before a blank, the answer is usually:","[""Plural noun"", ""Singular noun"", ""Verb"", ""Adjective""]",1
+21,q_li3,"Which accent emphasizes the ""r"" sound?","[""British"", ""Australian"", ""American"", ""None""]",2
+22,q_li3,Why practice different accents?,"[""To become an actor"", ""To be prepared for variety in the test"", ""It is fun"", ""No reason""]",1
+23,q_li4,What language is key for maps?,"[""Colors"", ""Directional (North, South, etc.)"", ""Food"", ""Emotion""]",1
+24,q_li4,"Where is ""North"" usually on a map?","[""Top"", ""Bottom"", ""Left"", ""Right""]",0
+25,q_r1,What is skimming?,"[""Reading every word"", ""Reading for main ideas"", ""Skipping the text"", ""Reading aloud""]",1
+26,q_r1,Where is the main idea often found?,"[""Middle of paragraph"", ""First/Last sentences"", ""Footnotes"", ""Title only""]",1
+27,q_r2,What are you looking for when scanning?,"[""General understanding"", ""Specific keywords (names, dates)"", ""Grammar mistakes"", ""Funny jokes""]",1
+28,q_r2,Do you need to read every word to scan?,"[""Yes"", ""No"", ""Maybe"", ""Always""]",1
+29,q_r3,"What does ""False"" mean?","[""Not mentioned"", ""Opposite of text"", ""Same as text"", ""Confusing""]",1
+30,q_r3,"What does ""Not Given"" mean?","[""Information is missing"", ""Information is wrong"", ""Information is correct"", ""Information is a lie""]",0
+31,q_r4,What should you focus on?,"[""Small details"", ""Main idea of the paragraph"", ""The first word"", ""The length of the paragraph""]",1
+32,q_r4,Are keywords always reliable?,"[""Yes"", ""No, they can be synonyms"", ""Always"", ""Never""]",1

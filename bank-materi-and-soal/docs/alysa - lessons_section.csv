@@ -1,0 +1,42 @@
+id,lesson_id,title,content,quiz_id
+1,1,Overview,The IELTS Speaking test consists of 3 parts and lasts 11-14 minutes. It is a face-to-face interview with an examiner.,NULL
+2,1,Part 1: Introduction,General questions about yourself.,NULL
+3,1,Part 2: Long Turn,Speak on a topic for 1-2 minutes.,NULL
+4,1,Quiz: Speaking Basics,Test your knowledge.,q1
+5,s2,Preparation,Use the 1 minute wisely for keywords.,NULL
+6,s2,Structure,Intro -> Past -> Present -> Future,NULL
+7,s2,Quiz: Strategies,Check understanding.,q_s2
+8,s3,Home & Hometown,Describe your living situation.,NULL
+9,s3,Work & Studies,Vocabulary for your occupation.,NULL
+10,s3,Quiz: Topics,Review common topics.,q_s3
+11,s4,Fillers,"Use ""Actually"", ""Well"" instead of silence.",NULL
+12,s4,Linking,Connect ideas logically.,NULL
+13,s4,Quiz: Fluency,Test fluency concepts.,q_s4
+14,2,Understanding Charts,identify the main trends.,NULL
+15,2,Vocabulary,"Increase, decrease, remain steady.",NULL
+16,2,Quiz: Charts,Test Task 1 skills.,q_w1
+17,w2,Structure,"4 paragraphs: Intro, 2 Body, Conclusion.",NULL
+18,w2,Thesis,State opinion clearly.,NULL
+19,w2,Quiz: Essays,Review structure.,q_w2
+20,w3,Formal,"Dear Sir/Madam, Yours faithfully.",NULL
+21,w3,Informal,"Hi John, Best wishes.",NULL
+22,w3,Quiz: Letters,Check letter styles.,q_w3
+23,w4,Linking Words,"Furthermore, However.",NULL
+24,w4,Lexical Resource,Use precise vocabulary.,NULL
+25,w4,Quiz: Vocab,Vocabulary check.,q_w4
+26,3,Focus,"Listen for names, numbers, places.",NULL
+27,3,Quiz: Details,Test detail listening.,q_li1
+28,l2,Context Clues,Grammar helps predict noun/verb.,NULL
+29,l2,Quiz: Prediction,Prediction skills.,q_li2
+30,l3,Varieties,"Note differences in vowel sounds and ""r"".",NULL
+31,l3,Quiz: Accents,Accent knowledge.,q_li3
+32,l4,Directions,"North, South, next to, opposite.",NULL
+33,l4,Quiz: Maps,Map skills.,q_li4
+34,4,Skimming,Read first/last sentences for gist.,NULL
+35,4,Quiz: Skimming,Skimming check.,q_r1
+36,r2,Scanning,"Look for capital letters, numbers.",NULL
+37,r2,Quiz: Scanning,Scanning check.,q_r2
+38,r3,Logic,"False = Contradiction, NG = Missing.",NULL
+39,r3,Quiz: T/F/NG,Logic check.,q_r3
+40,r4,Headings,Summarize the main idea.,NULL
+41,r4,Quiz: Headings,Heading check.,q_r4

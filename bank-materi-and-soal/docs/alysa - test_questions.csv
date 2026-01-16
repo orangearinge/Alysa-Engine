@@ -1,0 +1,21 @@
+id,section,task_type,prompt,reference_answer,keywords,created_at
+1,Speaking,Part 1,What is your favorite color and why?,"Personal preference, simple justification.","Red, Blue, cheerful, calm",1/14/2026 4:20
+2,Speaking,Part 1,Do you work or are you a student?,State current status clearly.,"Student, Work, University, Job",1/14/2026 4:20
+3,Speaking,Part 1,How often do you use a computer?,Frequency phrases.,"Every day, Rarely, For work",1/14/2026 4:20
+4,Speaking,Part 1,Do you like to travel?,Opinion + reason.,"Yes, explore, culture, No, homebody",1/14/2026 4:20
+5,Speaking,Part 2,"Describe a book you recently read. You should say: what it was, who wrote it, what it was about, and explain why you liked it.","Past tense narrative, description.","Novel, Author, Plot, Interesting",1/14/2026 4:20
+6,Speaking,Part 2,"Describe a gift you gave to someone. You should say: what the gift was, who you gave it to, why you chose it, and how they reacted.","Past tense, emotions.","Present, Surprise, Happy",1/14/2026 4:20
+7,Speaking,Part 2,"Describe a healthy habit you have. You should say: what it is, when you do it, how it helps you, and if you would recommend it.","Present simple, health vocab.","Exercise, Diet, Meditation",1/14/2026 4:20
+8,Speaking,Part 3,Do you think people today read enough books?,"Abstract opinion, comparison.","Digital era, decline, knowledge",1/14/2026 4:20
+9,Speaking,Part 3,Is gift-giving important in your culture?,"Cultural norms, values.","Tradition, Respect, Relationships",1/14/2026 4:20
+10,Speaking,Part 3,How can governments encourage healthy lifestyles?,"Suggestions, policy.","Tax sugar, Parks, Education",1/14/2026 4:20
+11,Writing,Task 1,The chart below shows the number of tourists visiting three different countries from 1995 to 2010. Summarize the information explicitly.,"Comparison, trends, past tense.","Increase, Decrease, Fluctuate, Peak",1/14/2026 4:20
+12,Writing,Task 1,The diagram illustrates the process of making chocolate. Summarize the steps.,"Passive voice, sequence connectors.","First, Then, Finally, Harvested, Processed",1/14/2026 4:20
+13,Writing,Task 1,The table compares the cost of water in 5 major cities in 2023.,"Superlatives, comparatives.","Highest, Lowest, More expensive",1/14/2026 4:20
+14,Writing,Task 1,The map shows the changes in a village park between 2010 and 2020.,"Location prepositions, change verbs.","Built, Demolished, Expanded",1/14/2026 4:20
+15,Writing,Task 2,"Some people believe that the internet has brought people closer together, while others think it has made us more isolated. Discuss both views and give your opinion.","Discussion, balance.","Communication, Social media, loneliness",1/14/2026 4:20
+16,Writing,Task 2,Education should be free for everyone. To what extent do you agree or disagree?,"Argumentative, modals.","University, Cost, Opportunity, Tax",1/14/2026 4:20
+17,Writing,Task 2,Environmental problems are too big for individuals to solve. Only governments can handle them. Do you agree?,"Agree/Disagree, environment.","Responsibility, Policy, Recycling",1/14/2026 4:20
+18,Writing,Task 2,"In many countries, people are living longer. What are the advantages and disadvantages of this trend?",Pros/Cons.,"Healthcare, Pension, Experience, Burden",1/14/2026 4:20
+19,Writing,Task 2,Children should be taught to manage money at school. Do you agree?,"Education, life skills.","Curriculum, Finance, Future",1/14/2026 4:20
+20,Writing,Task 2,Should public transport be free? Discuss.,"Opinion, urban planning.","Traffic, Pollution, Cost, Tax",1/14/2026 4:20
