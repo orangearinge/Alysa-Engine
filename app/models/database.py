@@ -14,11 +14,11 @@ class User(db.Model):
     test_date = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.now)
 
-    # Relationships
+    lesson_progress = db.relationship('UserLessonProgress', backref='user', lazy=True)
+    feedbacks = db.relationship('UserFeedback', backref='user', lazy=True)
     attempts = db.relationship('UserAttempt', backref='user', lazy=True)
     test_sessions = db.relationship('TestSession', backref='user', lazy=True)
     ocr_translations = db.relationship('OCRTranslation', backref='user', lazy=True)
-    lesson_progress = db.relationship('UserLessonProgress', backref='user', lazy=True)
 
 class Lesson(db.Model):
     __tablename__ = 'lessons'
@@ -128,3 +128,11 @@ class OCRTranslation(db.Model):
     original_text = db.Column(db.Text, nullable=False)
     translated_and_explained = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class UserFeedback(db.Model):
+    __tablename__ = 'user_feedback'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    feedback_text = db.Column(db.Text, nullable=False)
+    sentiment = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, default=datetime.now)

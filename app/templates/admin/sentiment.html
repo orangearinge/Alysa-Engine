@@ -1,0 +1,120 @@
+{% extends "admin/base.html" %} {% block content %}
+<div class="mb-8">
+    <h2 class="text-3xl font-extrabold text-zinc-900 tracking-tight">
+        Sentiment Analysis
+    </h2>
+    <p class="text-zinc-500 mt-1">
+        Understand user satisfaction through feedback sentiment.
+    </p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+    <!-- Chart Card -->
+    <div class="lg:col-span-1 bg-white p-6 rounded-xl border border-zinc-200 shadow-sm">
+        <h3 class="font-bold text-zinc-900 mb-6">Sentiment Distribution</h3>
+        <div class="relative h-64">
+            <canvas id="sentimentChart" data-labels='{{ labels | tojson | safe }}'
+                data-values='{{ data | tojson | safe }}'></canvas>
+        </div>
+    </div>
+
+    <!-- Recent Feedback List -->
+    <div class="lg:col-span-2 bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
+            <h3 class="font-bold text-zinc-900">Recent User Feedback</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="text-zinc-400 text-xs uppercase tracking-wider border-b border-zinc-50">
+                        <th class="px-6 py-3 font-semibold">User</th>
+                        <th class="px-6 py-3 font-semibold">Feedback</th>
+                        <th class="px-6 py-3 font-semibold">Sentiment</th>
+                        <th class="px-6 py-3 font-semibold text-right">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-50">
+                    {% for feedback in recent_feedback %}
+                    <tr class="hover:bg-zinc-50/50 transition">
+                        <td class="px-6 py-4">
+                            <div class="text-sm font-medium text-zinc-900">{{ feedback.user.username }}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-zinc-600 max-w-xs truncate" title="{{ feedback.feedback_text }}">
+                                {{ feedback.feedback_text }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded-md text-xs font-bold 
+                {% if feedback.sentiment == 'Positive' %}bg-green-100 text-green-700
+                {% elif feedback.sentiment == 'Negative' %}bg-red-100 text-red-700
+                {% else %}bg-blue-100 text-blue-700{% endif %}">
+                                {{ feedback.sentiment }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-xs text-zinc-500 text-right">
+                            {{ feedback.created_at.strftime('%b %d, %H:%M') }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not recent_feedback %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-8 text-center text-sm text-zinc-400">
+                            No feedback yet
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const chartCanvas = document.getElementById('sentimentChart');
+        if (!chartCanvas) return;
+
+        try {
+            const labels = JSON.parse(chartCanvas.getAttribute('data-labels') || '[]');
+            const values = JSON.parse(chartCanvas.getAttribute('data-values') || '[]');
+
+            const ctx = chartCanvas.getContext('2d');
+            const sentimentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            '#10b981', // Green for Positive
+                            '#ef4444', // Red for Negative
+                            '#3b82f6', // Blue for Neutral
+                            '#f59e0b', // Amber
+                            '#3b82f6', // Blue
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        } catch (e) {
+            console.error('Error initializing chart:', e);
+        }
+    });
+</script>
+{% endblock %}

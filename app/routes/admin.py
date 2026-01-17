@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy import or_
-from app.models.database import db, User, Lesson, LessonSection, Quiz, QuizQuestion, TestQuestion, TestSession, UserAttempt
+from app.models.database import db, User, Lesson, LessonSection, Quiz, QuizQuestion, TestQuestion, TestSession, UserAttempt, UserFeedback
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from functools import wraps
 import os
@@ -29,6 +29,7 @@ def dashboard():
         'tests': TestQuestion.query.count(),
         'sessions': TestSession.query.count(),
         'attempts': UserAttempt.query.count(),
+        'feedback': UserFeedback.query.count(),
     }
     
     recent_users = User.query.order_by(User.created_at.desc()).limit(5).all()
@@ -482,4 +483,32 @@ def delete_test_question(question_id):
         db.session.rollback()
         flash(f'Error deleting test question: {str(e)}', 'error')
     return redirect(url_for('admin.tests'))
+
+@admin_bp.route('/sentiment')
+@login_required
+def sentiment():
+    # Get sentiment counts
+    from sqlalchemy import func
+    counts = db.session.query(UserFeedback.sentiment, func.count(UserFeedback.id)).group_by(UserFeedback.sentiment).all()
+    
+    # Define desired order for consistent coloring (Green, Red, Blue)
+    sentiment_order = ['Positive', 'Negative', 'Neutral']
+    label_map = {c[0]: c[1] for c in counts if c[0]}
+    
+    labels = [s for s in sentiment_order if s in label_map]
+    data = [label_map[s] for s in sentiment_order if s in label_map]
+    
+    # Add any other sentiments if they exist
+    for c in counts:
+        if c[0] and c[0] not in sentiment_order:
+            labels.append(c[0])
+            data.append(c[1])
+    
+    # Get recent feedbacks
+    recent_feedback = UserFeedback.query.order_by(UserFeedback.created_at.desc()).limit(10).all()
+    
+    return render_template('admin/sentiment.html', 
+                         labels=labels, 
+                         data=data, 
+                         recent_feedback=recent_feedback)
 

@@ -18,6 +18,7 @@ from app.routes.test import test_bp
 from app.routes.user import user_bp
 from app.routes.admin import admin_bp
 from app.routes.chatbot import chatbot_bp
+from app.routes.feedback import feedback_bp
 from config import Config
 
 # Import Firebase initialization
@@ -47,6 +48,7 @@ def create_app():
     app.register_blueprint(question_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(chatbot_bp)
+    app.register_blueprint(feedback_bp)
 
     # Health check route
     @app.route('/api/health', methods=['GET'])
