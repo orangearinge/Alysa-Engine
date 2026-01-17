@@ -25,93 +25,46 @@ def ai_toefl_feedback(essay_text, mode="learning"):
 
         if mode == "test":
             prompt = f"""
-You are an official TOEFL iBT test evaluation assistant for SPEAKING and WRITING sections.
+Act as a TOEFL iBT evaluator for Speaking/Writing.
+Task: Evaluate response strictly (0–5 scale) based on rubric.
+Tone: Neutral, objective, formal. No corrections or teaching.
 
-Your job is to:
-- Evaluate individual TOEFL iBT task responses (this is ONE task out of 6 total)
-- Score the performance strictly using TOEFL iBT scoring rubrics (0–5 scale)
-- Provide concise, objective evaluator-style feedback
-- Be stateless - evaluate ONLY this specific task response
+Rubric:
+5: Excellent. Clear, effective, minimal errors.
+4: Good. Solid, some minor issues.
+3: Fair. Noticeable issues, generally understandable.
+2: Limited. Frequent errors, insufficient development.
+1: Weak. Hard to understand, serious errors.
+0: Off-topic or unintelligible.
 
-Focus on:
-- Grammar accuracy and language use
-- Idea development and content relevance
-- Coherence and organization
-- Lexical range and vocabulary appropriateness
-- Speaking tasks: fluency, clarity, pronunciation (evaluate as if spoken)
-- Writing tasks: cohesion, structure, clarity, academic development
+Response: "{essay_text}"
 
-IMPORTANT RULES:
-- This is a FORMAL TEST EVALUATION, NOT A LEARNING SESSION
-- Do NOT rewrite or correct the user's answer
-- Do NOT give step-by-step teaching or suggestions for improvement
-- Do NOT be friendly, encouraging, or overly positive
-- Stay neutral, objective, and evaluator-like in tone
-- Output must be based ONLY on the provided text
-- Do NOT reference other tasks or overall performance
-
-Evaluate this individual task response:
-"{essay_text}"
-
-OUTPUT FORMAT (JSON only, no other text):
+Output JSON ONLY:
 {{
-  "score": <integer 0-5>,
-  "feedback": [
-      "Objective assessment of grammar and language use",
-      "Evaluation of content development and relevance",
-      "Assessment of organization and coherence",
-      "Comments on vocabulary and lexical range"
-  ]
+  "score": <int 0-5>,
+  "feedback": ["Grammar/Language", "Content Relevance", "Organization", "Vocabulary"]
 }}
-
-TOEFL iBT Scoring Rubric:
-5 = Excellent: Well-developed, clear, effective communication, minimal errors
-4 = Good: Generally well-developed, clear, some minor issues but solid overall
-3 = Fair: Somewhat developed, generally understandable, noticeable issues
-2 = Limited: Insufficient development, unclear communication, frequent errors
-1 = Weak: Very limited development, difficult to understand, serious errors
-0 = Off-topic: No response, completely off-topic, or unintelligible
-
-Provide ONLY the JSON response.
 """
         else:  # learning mode
             prompt = f"""
-You are an English writing evaluator for a mobile learning app.
-Your task is to evaluate VERY SHORT English sentences from beginner and intermediate learners.
+Act as an English writing evaluator for a learning app. 
+Evaluate short student sentences. Use JSON output only.
 
-Analyze the student's sentence below:
-"{essay_text}"
-
-Return feedback ONLY in this JSON format, nothing else:
-
+Output Format:
 {{
-  "status": "correct_or_incorrect",
-  "title": "short_title_with_emoji",
-  "feedback": "one short friendly English sentence + Indonesian translation",
-  "corrected_text": "the corrected sentence or the same sentence if correct"
+  "status": "correct|almost|incorrect",
+  "title": "short title + emoji",
+  "feedback": "short friendly EN feedback + ID translation",
+  "corrected_text": "corrected version or original"
 }}
 
 Rules:
-1. If the sentence is correct:
-   - status: "correct"
-   - title: "Benar 👍"
-   - feedback: short positive note + Indonesian version
-   - corrected_text: original sentence
+- Correct (status: correct, title: Benar 👍)
+- Small mistake (status: almost, title: Kurang Tepat 🥹)
+- Wrong (status: incorrect, title: Perlu Perbaikan ❗)
+- Keep feedback VERY SHORT.
 
-2. If it has a small mistake:
-   - status: "almost"
-   - title: "Kurang Tepat 🥹"
-   - feedback: short improvement note + Indonesian version
-   - corrected_text: corrected version
-
-3. If it's wrong:
-   - status: "incorrect"
-   - title: "Perlu Perbaikan ❗"
-   - feedback: short explanation + Indonesian version
-   - corrected_text: corrected version
-
-4. Keep feedback VERY SHORT, suitable for a mobile UI bottom sheet.
-5. Output only valid JSON.
+Student Sentence: "{essay_text}"
 """
 
         response = client.models.generate_content(

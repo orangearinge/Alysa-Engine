@@ -20,3 +20,5 @@ firebase-admin
 joblib
 pandas
 scikit-learn
+gradio_client
+

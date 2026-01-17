@@ -15,18 +15,36 @@ from app.models.database import (
 learning_bp = Blueprint('learning', __name__)
 
 @learning_bp.route('/api/lessons', methods=['GET'])
-# @jwt_required() - Optional: make public or protected
 def get_lessons():
-    """Get all lessons, optionally filtered by category"""
+    """Get all lessons, optionally filtered by category and showing completion"""
     try:
         category = request.args.get('category')
+        user_id = None
+        
+        # Optionally get user_id if token is provided
+        try:
+            from flask_jwt_extended import decode_token
+            auth_header = request.headers.get('Authorization')
+            if auth_header and auth_header.startswith('Bearer '):
+                token = auth_header.split(' ')[1]
+                decoded = decode_token(token)
+                user_id = int(decoded['sub'])
+        except Exception:
+            pass
 
         query = Lesson.query
         if category:
-            # Case insensitive filtering
             query = query.filter(Lesson.category.ilike(category))
 
         lessons = query.all()
+        
+        # Get completed lesson IDs for this user
+        completed_ids = set()
+        if user_id:
+            progress = UserLessonProgress.query.filter_by(
+                user_id=user_id, is_completed=True
+            ).all()
+            completed_ids = {p.lesson_id for p in progress}
 
         lessons_data = []
         for lesson in lessons:
@@ -36,8 +54,7 @@ def get_lessons():
                 'description': lesson.description,
                 'category': lesson.category,
                 'durationMinutes': lesson.duration_minutes,
-                # In real app, check UserLessonProgress here
-                'isCompleted': False
+                'isCompleted': lesson.id in completed_ids
             })
 
         return jsonify({'lessons': lessons_data}), 200

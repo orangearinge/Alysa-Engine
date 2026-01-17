@@ -40,26 +40,18 @@ def extract_text(image_array: np.ndarray):
 def build_prompt(ocr_text: str):
     """Buat prompt untuk dikirim ke Gemini."""
     return f"""
-You are a linguistics assistant.
-You will receive text that may be in Indonesian or English.
+Act as a linguistics expert. Process the following text (ID/EN):
+1. Translate to clear English if Indonesian.
+2. Analyze each English sentence: Grammar Point (ID explanation).
 
-Your task:
-1. Detect if the text is Indonesian.
-2. If yes, translate it into clear and natural English (only one version).
-3. Then analyze each **English sentence**.
-   For each sentence, identify:
-   - Grammar point (e.g., Simple Present Tense, Coordinating Conjunction, Interjection)
-   - Give a short explanation in Indonesian about how that grammar is used.
-
-Return only valid JSON in this exact format:
-
+Output ONLY JSON:
 {{
-  "translation": "<string>",
+  "translation": "...",
   "sentence_analysis": [
     {{
-      "sentence": "<English sentence>",
-      "grammar_point": "<string>",
-      "explanation": "<string in Indonesian>"
+      "sentence": "...",
+      "grammar_point": "...",
+      "explanation": "..."
     }}
   ]
 }}
