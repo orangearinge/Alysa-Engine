@@ -192,9 +192,12 @@ def submit_test_answers():
             feedback_result = gemini_feedback(task_text, mode="test")
             task_score = feedback_result.get('score', 0)
 
-            # Validate score is within expected range
-            if not isinstance(task_score, (int, float)) or task_score < 0 or task_score > 5:
+            # Validate score is within expected range (IELTS 0-9)
+            if not isinstance(task_score, (int, float)) or task_score < 0 or task_score > 9:
                 task_score = 0  # Default to 0 if invalid score
+            
+            # Ensure score is rounded to nearest 0.5 for IELTS standard
+            task_score = round(float(task_score) * 2) / 2
 
             total_score += task_score
             task_count += 1
@@ -225,21 +228,30 @@ def submit_test_answers():
         overall_score = total_score / task_count if task_count > 0 else 0
 
         # TOEFL iBT performance level descriptors (strict format)
-        if overall_score >= 5.0:
-            performance_level = "Excellent"
-        elif overall_score >= 4.0:
-            performance_level = "Good"
-        elif overall_score >= 3.0:
-            performance_level = "Fair"
-        elif overall_score >= 2.0:
-            performance_level = "Limited"
-        elif overall_score >= 1.0:
-            performance_level = "Weak"
+        # IELTS performance level descriptors (Bands 0-9)
+        if overall_score >= 8.5:
+            performance_level = "Expert User (Band 9)"
+        elif overall_score >= 7.5:
+            performance_level = "Very Good User (Band 8)"
+        elif overall_score >= 6.5:
+            performance_level = "Good User (Band 7)"
+        elif overall_score >= 5.5:
+            performance_level = "Competent User (Band 6)"
+        elif overall_score >= 4.5:
+            performance_level = "Modest User (Band 5)"
+        elif overall_score >= 3.5:
+            performance_level = "Limited User (Band 4)"
+        elif overall_score >= 2.5:
+            performance_level = "Extremely Limited User (Band 3)"
+        elif overall_score >= 1.5:
+            performance_level = "Intermittent User (Band 2)"
+        elif overall_score >= 0.5:
+            performance_level = "Non User (Band 1)"
         else:
-            performance_level = "Off-topic"
+            performance_level = "Did not attempt (Band 0)"
 
         # Generate overall feedback
-        overall_feedback = f"TOEFL iBT Test Evaluation - Overall Score: {overall_score:.1f}/5.0 - Performance Level: {performance_level}"
+        overall_feedback = f"IELTS Test Evaluation - Overall Score: {overall_score:.1f}/9.0 - Performance Level: {performance_level}"
 
         # Update test session
         session.total_score = overall_score
@@ -258,14 +270,14 @@ def submit_test_answers():
                 'overall_score': round(overall_score, 1),
                 'performance_level': performance_level,
                 'total_tasks_evaluated': 6,
-                'test_type': 'TOEFL iBT Writing & Speaking'
+                'test_type': 'IELTS Writing & Speaking'
             },
             'evaluation_summary': {
                 'overall_feedback': overall_feedback,
                 'detailed_task_feedback': detailed_feedback
             },
             'scoring_criteria': {
-                'scale': '0-5 points per task',
+                'scale': '0-9 Band Score per task',
                 'focus_areas': [
                     'Grammar accuracy',
                     'Idea development',
@@ -404,6 +416,8 @@ def submit_practice_test():
                 feedback_result = gemini_feedback(user_text, mode="test")
             
             score = feedback_result.get('score', 0)
+            # Ensure score is rounded to nearest 0.5 for IELTS standard
+            score = round(float(score) * 2) / 2
             
             total_score += score
             evaluated_count += 1
@@ -428,7 +442,13 @@ def submit_practice_test():
             })
 
         # Finalize Session
-        avg_score = total_score / evaluated_count if evaluated_count > 0 else 0
+        # Calculate average band score (0-9)
+        avg_band_score = total_score / evaluated_count if evaluated_count > 0 else 0
+        # Normalize to 0-10 scale for the 10-question test
+        # Formula: (avg_band_score / 9.0) * 10.0
+        normalized_score = (avg_band_score / 9.0) * 10.0
+        avg_score = round(normalized_score, 1)
+        
         session.total_score = avg_score
         session.finished_at = datetime.utcnow()
         session.ai_feedback = json.dumps({'detailed_feedback': detailed_feedback_list})

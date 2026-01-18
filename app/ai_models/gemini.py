@@ -25,24 +25,28 @@ def ai_toefl_feedback(essay_text, mode="learning"):
 
         if mode == "test":
             prompt = f"""
-Act as a TOEFL iBT evaluator for Speaking/Writing.
-Task: Evaluate response strictly (0–5 scale) based on rubric.
-Tone: Neutral, objective, formal. No corrections or teaching.
+Act as an IELTS Examiner for Speaking and Writing tasks. 
+Your goal is to provide a detailed evaluation of the student's response based on the official IELTS assessment criteria.
 
-Rubric:
-5: Excellent. Clear, effective, minimal errors.
-4: Good. Solid, some minor issues.
-3: Fair. Noticeable issues, generally understandable.
-2: Limited. Frequent errors, insufficient development.
-1: Weak. Hard to understand, serious errors.
-0: Off-topic or unintelligible.
+Scoring Scale: 0.0 to 9.0 (in increments of 0.5 or 1.0)
 
-Response: "{essay_text}"
+Assessment Criteria:
+1. Task Achievement/Response: How well the answer addresses the task and if it's relevant to the context.
+2. Coherence and Cohesion: How well organized and connected the ideas are.
+3. Lexical Resource: Range and accuracy of vocabulary used.
+4. Grammatical Range and Accuracy: Range and correctness of sentence structures.
 
-Output JSON ONLY:
+Response to Evaluate: "{essay_text}"
+
+Output JSON ONLY with the following structure:
 {{
-  "score": <int 0-5>,
-  "feedback": ["Grammar/Language", "Content Relevance", "Organization", "Vocabulary"]
+  "score": <float 0.0-9.0>,
+  "feedback": [
+    "Relevance: <feedback on how relevant the answer is to the context>",
+    "Grammar: <feedback on grammar and sentence construction>",
+    "Vocabulary: <feedback on word choice and range>",
+    "Cohesion: <feedback on organization and flow>"
+  ]
 }}
 """
         else:  # learning mode
@@ -85,14 +89,14 @@ Student Sentence: "{essay_text}"
         if mode == "test":
             # Validate and ensure proper test mode response format
             if "score" not in result:
-                result["score"] = 0
+                result["score"] = 0.0
             else:
-                # Ensure score is valid integer between 0-5
+                # Ensure score is valid integer/float between 0-9
                 try:
-                    score = int(result["score"])
-                    result["score"] = max(0, min(5, score))
+                    score = float(result["score"])
+                    result["score"] = max(0.0, min(9.0, score))
                 except (ValueError, TypeError):
-                    result["score"] = 0
+                    result["score"] = 0.0
 
             if "feedback" not in result or not isinstance(result["feedback"], list):
                 result["feedback"] = ["Unable to evaluate response due to processing error."]

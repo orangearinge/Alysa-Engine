@@ -75,11 +75,15 @@ def evaluate(question, answer):
     features, diag = extract_features(question, answer)
 
     raw_score = model.predict([features])[0]
-    score = round(raw_score)
-    score = max(0, min(5, score))
+    # Scale from 0-5 to 0-9 IELTS range
+    # Formula: (raw_score / 5.0) * 9.0
+    # Then round to nearest 0.5 as per IELTS standards
+    ielts_score = (raw_score / 5.0) * 9.0
+    score = round(ielts_score * 2) / 2
+    score = max(0.0, min(9.0, score))
 
     return {
         "model": "ALYSA",
         "score": score,
-        "feedback": generate_feedback(score, diag)
+        "feedback": generate_feedback(raw_score, diag) # Pass raw_score for feedback logic (0-5)
     }

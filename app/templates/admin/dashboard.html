@@ -133,8 +133,8 @@
             </td>
             <td class="px-6 py-4">
               <span
-                class="px-2 py-1 rounded-md text-xs font-bold {% if session.total_score >= 4 %}bg-green-100 text-green-700{% elif session.total_score >= 3 %}bg-yellow-100 text-yellow-700{% else %}bg-zinc-100 text-zinc-700{% endif %}">
-                {{ "%.1f"|format(session.total_score) }}/5.0
+                class="px-2 py-1 rounded-md text-xs font-bold {% if session.total_score >= 7 %}bg-green-100 text-green-700{% elif session.total_score >= 5 %}bg-yellow-100 text-yellow-700{% else %}bg-zinc-100 text-zinc-700{% endif %}">
+                {{ "%.1f"|format(session.total_score) }}/9.0
               </span>
             </td>
             <td class="px-6 py-4 text-xs text-zinc-500 text-right">
