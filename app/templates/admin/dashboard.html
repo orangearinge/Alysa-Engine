@@ -9,76 +9,44 @@
 </div>
 
 <!-- Stats Grid -->
-<div
-  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4 mb-10"
->
-  <div
-    class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col"
-  >
-    <span
-      class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1"
-      >Total Users</span
-    >
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4 mb-10">
+  <div class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col">
+    <span class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1">Total Users</span>
     <span class="text-2xl font-bold text-zinc-900">{{ stats.users }}</span>
     <div class="mt-auto pt-2 text-xs text-blue-600 font-medium">
       <a href="{{ url_for('admin.users') }}">Manage Users &rarr;</a>
     </div>
   </div>
-  <div
-    class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col"
-  >
-    <span
-      class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1"
-      >Lessons</span
-    >
+  <div class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col">
+    <span class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1">Lessons</span>
     <span class="text-2xl font-bold text-zinc-900">{{ stats.lessons }}</span>
     <div class="mt-auto pt-2 text-xs text-blue-600 font-medium">
       <a href="{{ url_for('admin.learning') }}">Manage Content &rarr;</a>
     </div>
   </div>
-  <div
-    class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col"
-  >
-    <span
-      class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1"
-      >Quizzes</span
-    >
+  <div class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col">
+    <span class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1">Quizzes</span>
     <span class="text-2xl font-bold text-zinc-900">{{ stats.quizzes }}</span>
     <div class="mt-auto pt-2 text-xs text-blue-600 font-medium">
       <a href="{{ url_for('admin.quiz') }}">Manage Quizzes &rarr;</a>
     </div>
   </div>
-  <div
-    class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col"
-  >
-    <span
-      class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1"
-      >Tests</span
-    >
+  <div class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col">
+    <span class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1">Tests</span>
     <span class="text-2xl font-bold text-zinc-900">{{ stats.tests }}</span>
     <div class="mt-auto pt-2 text-xs text-blue-600 font-medium">
       <a href="{{ url_for('admin.tests') }}">Manage Tests &rarr;</a>
     </div>
   </div>
-  <div
-    class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col"
-  >
-    <span
-      class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1"
-      >Sessions</span
-    >
+  <div class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col">
+    <span class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1">Sessions</span>
     <span class="text-2xl font-bold text-zinc-900">{{ stats.sessions }}</span>
     <div class="mt-auto pt-2 text-xs text-zinc-400">
       Total full length tests
     </div>
   </div>
-  <div
-    class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col"
-  >
-    <span
-      class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1"
-      >Attempts</span
-    >
+  <div class="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm flex flex-col">
+    <span class="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-1">Attempts</span>
     <span class="text-2xl font-bold text-zinc-900">{{ stats.attempts }}</span>
     <div class="mt-auto pt-2 text-xs text-zinc-400">
       Individual task attempts
@@ -86,27 +54,31 @@
   </div>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+  <!-- Sentiment Chart Card -->
+  <div class="lg:col-span-1 bg-white p-6 rounded-xl border border-zinc-200 shadow-sm flex flex-col">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="font-bold text-zinc-900">Sentiment Distribution</h3>
+      <a href="{{ url_for('admin.sentiment') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800">Details
+        &rarr;</a>
+    </div>
+    <div class="relative h-64">
+      <canvas id="sentimentChart" data-labels='{{ sentiment_labels | tojson | safe }}'
+        data-values='{{ sentiment_data | tojson | safe }}'></canvas>
+    </div>
+  </div>
+
   <!-- Recent Users -->
-  <div
-    class="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden"
-  >
-    <div
-      class="px-6 py-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50"
-    >
+  <div class="lg:col-span-1 bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col">
+    <div class="px-6 py-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
       <h3 class="font-bold text-zinc-900">Recently Joined Users</h3>
-      <a
-        href="{{ url_for('admin.users') }}"
-        class="text-xs font-semibold text-zinc-500 hover:text-zinc-900"
-        >View All</a
-      >
+      <a href="{{ url_for('admin.users') }}" class="text-xs font-semibold text-zinc-500 hover:text-zinc-900">View
+        All</a>
     </div>
     <div class="overflow-x-auto">
       <table class="w-full text-left">
         <thead>
-          <tr
-            class="text-zinc-400 text-xs uppercase tracking-wider border-b border-zinc-50"
-          >
+          <tr class="text-zinc-400 text-xs uppercase tracking-wider border-b border-zinc-50">
             <th class="px-6 py-3 font-semibold">User</th>
             <th class="px-6 py-3 font-semibold text-right">Joined</th>
           </tr>
@@ -137,21 +109,15 @@
   </div>
 
   <!-- Recent Sessions -->
-  <div
-    class="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden"
-  >
-    <div
-      class="px-6 py-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50"
-    >
+  <div class="lg:col-span-1 bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col">
+    <div class="px-6 py-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
       <h3 class="font-bold text-zinc-900">Recent Test Sessions</h3>
       <span class="text-xs font-semibold text-zinc-400">Last 5</span>
     </div>
     <div class="overflow-x-auto">
       <table class="w-full text-left">
         <thead>
-          <tr
-            class="text-zinc-400 text-xs uppercase tracking-wider border-b border-zinc-50"
-          >
+          <tr class="text-zinc-400 text-xs uppercase tracking-wider border-b border-zinc-50">
             <th class="px-6 py-3 font-semibold">User</th>
             <th class="px-6 py-3 font-semibold">Score</th>
             <th class="px-6 py-3 font-semibold text-right">Date</th>
@@ -167,8 +133,7 @@
             </td>
             <td class="px-6 py-4">
               <span
-                class="px-2 py-1 rounded-md text-xs font-bold {% if session.total_score >= 4 %}bg-green-100 text-green-700{% elif session.total_score >= 3 %}bg-yellow-100 text-yellow-700{% else %}bg-zinc-100 text-zinc-700{% endif %}"
-              >
+                class="px-2 py-1 rounded-md text-xs font-bold {% if session.total_score >= 4 %}bg-green-100 text-green-700{% elif session.total_score >= 3 %}bg-yellow-100 text-yellow-700{% else %}bg-zinc-100 text-zinc-700{% endif %}">
                 {{ "%.1f"|format(session.total_score) }}/5.0
               </span>
             </td>
@@ -188,4 +153,56 @@
     </div>
   </div>
 </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const chartCanvas = document.getElementById('sentimentChart');
+    if (!chartCanvas) return;
+
+    try {
+      const labels = JSON.parse(chartCanvas.getAttribute('data-labels') || '[]');
+      const values = JSON.parse(chartCanvas.getAttribute('data-values') || '[]');
+
+      const ctx = chartCanvas.getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: [
+              '#10b981', // Green for Positive
+              '#ef4444', // Red for Negative
+              '#3b82f6', // Blue for Neutral
+              '#f59e0b', // Amber
+              '#6366f1', // Indigo
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                usePointStyle: true,
+                padding: 20,
+                font: {
+                  size: 11
+                }
+              }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    } catch (e) {
+      console.error('Error initializing chart:', e);
+    }
+  });
+</script>
 {% endblock %}

@@ -35,10 +35,27 @@ def dashboard():
     recent_users = User.query.order_by(User.created_at.desc()).limit(5).all()
     recent_sessions = TestSession.query.order_by(TestSession.started_at.desc()).limit(5).all()
     
+    # Sentiment stats for dashboard chart
+    from sqlalchemy import func
+    counts = db.session.query(UserFeedback.sentiment, func.count(UserFeedback.id)).group_by(UserFeedback.sentiment).all()
+    
+    sentiment_order = ['Positive', 'Negative', 'Neutral']
+    label_map = {c[0]: c[1] for c in counts if c[0]}
+    
+    sentiment_labels = [s for s in sentiment_order if s in label_map]
+    sentiment_data = [label_map[s] for s in sentiment_order if s in label_map]
+    
+    for c in counts:
+        if c[0] and c[0] not in sentiment_order:
+            sentiment_labels.append(c[0])
+            sentiment_data.append(c[1])
+    
     return render_template('admin/dashboard.html', 
                          stats=stats, 
                          recent_users=recent_users, 
-                         recent_sessions=recent_sessions)
+                         recent_sessions=recent_sessions,
+                         sentiment_labels=sentiment_labels,
+                         sentiment_data=sentiment_data)
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -487,28 +504,11 @@ def delete_test_question(question_id):
 @admin_bp.route('/sentiment')
 @login_required
 def sentiment():
-    # Get sentiment counts
-    from sqlalchemy import func
-    counts = db.session.query(UserFeedback.sentiment, func.count(UserFeedback.id)).group_by(UserFeedback.sentiment).all()
+    page = request.args.get('page', 1, type=int)
     
-    # Define desired order for consistent coloring (Green, Red, Blue)
-    sentiment_order = ['Positive', 'Negative', 'Neutral']
-    label_map = {c[0]: c[1] for c in counts if c[0]}
-    
-    labels = [s for s in sentiment_order if s in label_map]
-    data = [label_map[s] for s in sentiment_order if s in label_map]
-    
-    # Add any other sentiments if they exist
-    for c in counts:
-        if c[0] and c[0] not in sentiment_order:
-            labels.append(c[0])
-            data.append(c[1])
-    
-    # Get recent feedbacks
-    recent_feedback = UserFeedback.query.order_by(UserFeedback.created_at.desc()).limit(10).all()
+    # Get all feedback with pagination
+    pagination = UserFeedback.query.order_by(UserFeedback.created_at.desc()).paginate(page=page, per_page=10, error_out=False)
     
     return render_template('admin/sentiment.html', 
-                         labels=labels, 
-                         data=data, 
-                         recent_feedback=recent_feedback)
+                         pagination=pagination)
 
