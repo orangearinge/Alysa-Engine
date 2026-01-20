@@ -221,6 +221,10 @@ def submit_test_answers():
                 'section': section,
                 'score': task_score,
                 'feedback': feedback_result.get('feedback', []),
+                'suggested_correction': feedback_result.get('suggested_correction', ''),
+                'evaluation': feedback_result.get('evaluation', {}),
+                'pro_tips': feedback_result.get('pro_tips', []),
+                'reference_answer': feedback_result.get('reference_answer', ''),
                 'question_count': len(question_ids)
             })
 
@@ -398,22 +402,22 @@ def submit_practice_test():
             # Evaluate Based on Model Selection
             feedback_result = {}
             score = 0
+            question_text = ""
 
-            if model_type == 'alysa':
-                # Alysa Model requires Question Prompt + Answer
-                # We need to fetch the question prompt from DB
-                question = TestQuestion.query.get(q_id)
-                if question:
-                     # Use Alysa Model
-                     feedback_result = alysa_evaluate(question.prompt, user_text)
+            question = TestQuestion.query.get(q_id)
+            if question:
+                question_text = question.prompt
+                if model_type == 'alysa':
+                    # Use Alysa Model
+                    feedback_result = alysa_evaluate(question.prompt, user_text)
                 else:
-                     feedback_result = {
-                         'score': 0,
-                         'feedback': ["Error: Question not found for Alysa evaluation."]
-                     }
+                    # Default: Gemini Model (Test Mode) -> Only needs Answer
+                    feedback_result = gemini_feedback(user_text, mode="test")
             else:
-                # Default: Gemini Model (Test Mode) -> Only needs Answer
-                feedback_result = gemini_feedback(user_text, mode="test")
+                feedback_result = {
+                    'score': 0,
+                    'feedback': ["Error: Question not found."]
+                }
             
             score = feedback_result.get('score', 0)
             # Ensure score is rounded to nearest 0.5 for IELTS standard
@@ -436,18 +440,21 @@ def submit_practice_test():
 
             detailed_feedback_list.append({
                 'question_id': q_id,
+                'question_text': question_text,
                 'user_answer': user_text,
                 'score': score,
-                'feedback': feedback_result.get('feedback', [])
+                'feedback': feedback_result.get('feedback', []),
+                'suggested_correction': feedback_result.get('suggested_correction', ''),
+                'evaluation': feedback_result.get('evaluation', {}),
+                'pro_tips': feedback_result.get('pro_tips', []),
+                'reference_answer': feedback_result.get('reference_answer', '')
             })
 
         # Finalize Session
-        # Calculate average band score (0-9)
-        avg_band_score = total_score / evaluated_count if evaluated_count > 0 else 0
-        # Normalize to 0-10 scale for the 10-question test
-        # Formula: (avg_band_score / 9.0) * 10.0
-        normalized_score = (avg_band_score / 9.0) * 10.0
-        avg_score = round(normalized_score, 1)
+        # Calculate overall score (0-100) based on 10 tasks * band 9 max = 90 total possible
+        # Formula: (total_score / 90) * 100
+        avg_score = (total_score / 90.0) * 100 if evaluated_count > 0 else 0
+        avg_score = round(avg_score, 1)
         
         session.total_score = avg_score
         session.finished_at = datetime.utcnow()
