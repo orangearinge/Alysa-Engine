@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alysa Backend Architecture - Deep Dive</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-color: #050505;
+        --card-bg: rgba(255, 255, 255, 0.03);
+        --accent: #b48eff; /* Purple accent */
+        --accent-secondary: #00d2ff; /* Cyan accent */
+        --text-primary: #ffffff;
+        --text-secondary: #b0b0b0;
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Outfit", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-primary);
+        overflow: hidden;
+        line-height: 1.6;
+      }
+
+      /* Presentation Container */
+      #presentation {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        position: relative;
+      }
+
+      .slide {
+        min-width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 4rem;
+        position: absolute;
+        transition: var(--transition);
+        opacity: 0;
+        transform: scale(0.95);
+        pointer-events: none;
+      }
+
+      .slide.active {
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: all;
+        z-index: 10;
+      }
+
+      /* Typography */
+      h1 {
+        font-size: 5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--text-primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+        letter-spacing: -2px;
+      }
+
+      h2 {
+        font-size: 3rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-secondary)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      h3 {
+        font-size: 1.8rem;
+        color: var(--accent-secondary);
+        margin-bottom: 1rem;
+      }
+
+      p {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        max-width: 800px;
+        text-align: center;
+      }
+
+      /* Components */
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        max-width: 900px;
+        width: 100%;
+        margin-top: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        animation: slideUp 0.8s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+        width: 100%;
+      }
+
+      .tech-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        border: 1px solid transparent;
+        transition: var(--transition);
+      }
+
+      .tech-item:hover {
+        border-color: var(--accent);
+        background: rgba(180, 142, 255, 0.1);
+        transform: translateY(-5px);
+      }
+
+      .tech-item i {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--accent);
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      code {
+        font-family: "JetBrains Mono", monospace;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        color: var(--accent-secondary);
+      }
+
+      .code-block {
+        font-family: "JetBrains Mono", monospace;
+        background: #0d0d0d;
+        padding: 1.5rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        text-align: left;
+        overflow-x: auto;
+        border: 1px solid var(--glass-border);
+        margin-bottom: 1.5rem;
+      }
+
+      .keyword {
+        color: #ff79c6;
+      }
+      .func {
+        color: #50fa7b;
+      }
+      .comment {
+        color: #6272a4;
+      }
+      .string {
+        color: #f1fa8c;
+      }
+
+      /* Navigation Controls */
+      .controls {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        display: flex;
+        gap: 1rem;
+        z-index: 100;
+      }
+
+      .btn {
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        user-select: none;
+      }
+
+      .btn:hover {
+        background: var(--accent);
+        border-color: var(--accent);
+        transform: scale(1.1);
+      }
+
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 4px;
+        background: linear-gradient(
+          to right,
+          var(--accent),
+          var(--accent-secondary)
+        );
+        z-index: 1000;
+        transition: width 0.3s ease;
+      }
+
+      /* Layout Helpers */
+      .row {
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .col {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      /* Visual Elements */
+      .background-blob {
+        position: fixed;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(
+          circle,
+          rgba(180, 142, 255, 0.1) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+        border-radius: 50%;
+        z-index: -1;
+        filter: blur(50px);
+        animation: float 20s infinite alternate;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translate(-10%, -10%) scale(1);
+        }
+        100% {
+          transform: translate(10%, 10%) scale(1.2);
+        }
+      }
+
+      .list-item {
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        text-align: left;
+      }
+
+      .list-item i {
+        color: var(--accent);
+        margin-top: 0.3rem;
+      }
+
+      ul {
+        list-style: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="background-blob" style="top: -10%; left: -10%"></div>
+    <div
+      class="background-blob"
+      style="
+        bottom: -10%;
+        right: -10%;
+        background: radial-gradient(
+          circle,
+          rgba(0, 210, 255, 0.05) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+      "
+    ></div>
+
+    <div id="presentation">
+      <!-- Slide 1: Welcome -->
+      <div class="slide active">
+        <h1>ALYSA Backend</h1>
+        <h3>AI Powered Learning Assistant</h3>
+        <p>
+          Arsitektur & Implementasi Teknologi di Balik Engine Pembelajaran
+          Bahasa Inggris Cerdas.
+        </p>
+        <div class="card" style="text-align: center">
+          <p>Oleh Antigravity AI</p>
+        </div>
+      </div>
+
+      <!-- Slide 2: Tech Stack -->
+      <div class="slide">
+        <h2>The Tech Stack</h2>
+        <div class="tech-grid">
+          <div class="tech-item">
+            <i>Backend Framework</i><br /><strong>Flask (Python)</strong>
+          </div>
+          <div class="tech-item">
+            <i>AI Model</i><br /><strong>Google Gemini 2.5</strong>
+          </div>
+          <div class="tech-item">
+            <i>Database/ORM</i><br /><strong>SQLAlchemy</strong>
+          </div>
+          <div class="tech-item">
+            <i>Authentication</i><br /><strong>Firebase Admin</strong>
+          </div>
+          <div class="tech-item">
+            <i>NLP Toolkit</i><br /><strong>LanguageTool</strong>
+          </div>
+          <div class="tech-item">
+            <i>Image Parser</i><br /><strong>EasyOCR</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Architecture Overview -->
+      <div class="slide">
+        <h2>Arsitektur Sistem</h2>
+        <div class="card">
+          <div class="code-block">
+            <span class="comment"># Struktur Proyek Modular</span><br />
+            alysa-engine/<br />
+            ├── <span class="func">app/</span><br />
+            │ ├── <span class="func">routes/</span>
+            <span class="comment"># API Endpoints (Auth, OCR, Test)</span><br />
+            │ ├── <span class="func">models/</span>
+            <span class="comment"># Database Schema (SQLAlchemy)</span><br />
+            │ ├── <span class="func">ai_models/</span>
+            <span class="comment"># Intelligence Engine</span><br />
+            │ └── <span class="func">utils/</span>
+            <span class="comment"># Helper Functions</span><br />
+            ├── <span class="keyword">config.py</span><br />
+            └── <span class="keyword">app.py</span>
+            <span class="comment"># Entry Point</span>
+          </div>
+          <p style="text-align: left">
+            Sistem menggunakan pola <strong>Application Factory</strong> untuk
+            fleksibilitas dan modularitas yang tinggi dalam pengembangan fitur.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 4: Database Design -->
+      <div class="slide">
+        <h2>Data Modeling</h2>
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <h3>Core Entities</h3>
+              <ul>
+                <li class="list-item">
+                  <i>●</i> <strong>Users:</strong> Profil, target skor, &
+                  preferensi belajar.
+                </li>
+                <li class="list-item">
+                  <i>●</i> <strong>Lessons:</strong> Materi belajar hierarkis
+                  (Section > Content).
+                </li>
+                <li class="list-item">
+                  <i>●</i> <strong>Quizzes:</strong> Evaluasi singkat untuk tiap
+                  materi.
+                </li>
+                <li class="list-item">
+                  <i>●</i> <strong>OCR Session:</strong> Riwayat pemindaian &
+                  terjemahan.
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <h3>Performance</h3>
+              <p style="text-align: left; font-size: 1rem">
+                Menggunakan <code>backref</code> dan
+                <code>lazy loading</code> untuk efisiensi kueri data relasional
+                yang kompleks.
+              </p>
+              <div
+                class="code-block"
+                style="font-size: 0.8rem; margin-top: 1rem"
+              >
+                <span class="keyword">class</span>
+                <span class="func">User</span>(db.Model):<br />
+                &nbsp;&nbsp;id = db.Column(db.Integer, primary_key=True)<br />
+                &nbsp;&nbsp;attempts = db.relationship(<span class="string"
+                  >'UserAttempt'</span
+                >, backref=<span class="string">'user'</span>)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Authentication Flow -->
+      <div class="slide">
+        <h2>Hybrid Authentication</h2>
+        <div class="card">
+          <div class="list-item">
+            <i>✓</i> <strong>Firebase Token Verification:</strong> Memvalidasi
+            identitas dari Mobile App.
+          </div>
+          <div class="list-item">
+            <i>✓</i> <strong>Auto User Creation:</strong> Sinkronisasi otomatis
+            saat user pertama kali login via Firebase.
+          </div>
+          <div class="list-item">
+            <i>✓</i> <strong>JWT Session:</strong> Mengeluarkan
+            <code>access_token</code> internal untuk keamanan request API.
+          </div>
+          <div class="code-block" style="margin-top: 1rem">
+            decoded_token = firebase_auth.verify_id_token(id_token)<br />
+            user = User.query.filter_by(email=decoded_token[<span class="string"
+              >'email'</span
+            >]).first()
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: AI Intelligence (Alysa Engine) -->
+      <div class="slide">
+        <h2>AI Intelligence: Alysa Engine</h2>
+        <div class="row">
+          <div class="col">
+            <h3>TOEFL Score Predictor</h3>
+            <p style="text-align: left">
+              Alysa menganalisis teks user menggunakan algoritma heuristik &
+              semantic:
+            </p>
+            <ul>
+              <li class="list-item">
+                <i>-</i> <strong>Grammar Check:</strong> Menghitung error
+                presisi.
+              </li>
+              <li class="list-item">
+                <i>-</i> <strong>Coherence:</strong> Semantic similarity antar
+                kalimat.
+              </li>
+              <li class="list-item">
+                <i>-</i> <strong>Heuristic Scoring:</strong> Prediksi skor skala
+                0-5.
+              </li>
+            </ul>
+          </div>
+          <div class="col">
+            <div class="code-block" style="font-size: 0.75rem">
+              <span class="comment"># Semantic Coherence Analytics</span><br />
+              model = SentenceTransformer(<span class="string"
+                >'all-MiniLM-L6-v2'</span
+              >)<br />
+              sim = util.cos_sim(embed[i], embed[i+1])<br />
+              avg_coherence = sum(sims) / len(sims)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: OCR & Linguistic Analysis -->
+      <div class="slide">
+        <h2>Smart OCR Pipeline</h2>
+        <div class="card">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <div style="text-align: center; flex: 1">
+              <strong>Image</strong><br /><small>User Upload</small>
+            </div>
+            <div style="color: var(--accent)">➜</div>
+            <div style="text-align: center; flex: 1">
+              <strong>EasyOCR</strong><br /><small>Text Extraction</small>
+            </div>
+            <div style="color: var(--accent)">➜</div>
+            <div style="text-align: center; flex: 1">
+              <strong>Gemini AI</strong><br /><small>Context Analysis</small>
+            </div>
+          </div>
+          <div style="margin-top: 2rem">
+            <p
+              style="
+                text-align: left;
+                font-size: 1rem;
+                color: var(--text-secondary);
+              "
+            >
+              Bukan sekedar OCR biasa. Backend mengirim teks ke Gemini untuk
+              <strong>Sentence Analysis</strong> (Identifikasi Grammar Point &
+              Penjelasan Bahasa Indonesia).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Summary -->
+      <div class="slide">
+        <h2>Summary & Performance</h2>
+        <div class="tech-grid">
+          <div class="tech-item">
+            <i>Response Time</i><br /><strong>Efficient AI Pipeline</strong>
+          </div>
+          <div class="tech-item">
+            <i>Scalability</i><br /><strong>State-of-art LLM</strong>
+          </div>
+          <div class="tech-item">
+            <i>Security</i><br /><strong>JWT + Firebase</strong>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 3rem">
+          <p>
+            "Alysa bukan sekedar aplikasi kamus, melainkan tutor cerdas yang
+            ditenagai oleh integrasi NLP modern dan VLM (Vision Language
+            Model)."
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 9: Closing -->
+      <div class="slide">
+        <h1>Terima Kasih</h1>
+        <h3>Building the Future of Language Learning</h3>
+        <p>Ada Pertanyaan Terkait Backend Alysa?</p>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="btn" id="prevBtn">←</div>
+      <div class="btn" id="nextBtn">→</div>
+    </div>
+
+    <script>
+      const slides = document.querySelectorAll(".slide");
+      const nextBtn = document.getElementById("nextBtn");
+      const prevBtn = document.getElementById("prevBtn");
+      const progressBar = document.getElementById("progressBar");
+      let currentSlide = 0;
+
+      function updateSlide() {
+        slides.forEach((slide, index) => {
+          slide.classList.remove("active");
+          if (index === currentSlide) {
+            slide.classList.add("active");
+          }
+        });
+
+        // Progress bar
+        const progress = ((currentSlide + 1) / slides.length) * 100;
+        progressBar.style.width = `${progress}%`;
+      }
+
+      nextBtn.addEventListener("click", () => {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlide();
+        }
+      });
+
+      prevBtn.addEventListener("click", () => {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlide();
+        }
+      });
+
+      // Keyboard navigation
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === " ") {
+          if (currentSlide < slides.length - 1) {
+            currentSlide++;
+            updateSlide();
+          }
+        } else if (e.key === "ArrowLeft") {
+          if (currentSlide > 0) {
+            currentSlide--;
+            updateSlide();
+          }
+        }
+      });
+
+      // Initial progress bar
+      updateSlide();
+    </script>
+  </body>
+</html>

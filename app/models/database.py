@@ -14,11 +14,11 @@ class User(db.Model):
     test_date = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.now)
 
-    lesson_progress = db.relationship('UserLessonProgress', backref='user', lazy=True)
-    feedbacks = db.relationship('UserFeedback', backref='user', lazy=True)
-    attempts = db.relationship('UserAttempt', backref='user', lazy=True)
-    test_sessions = db.relationship('TestSession', backref='user', lazy=True)
-    ocr_translations = db.relationship('OCRTranslation', backref='user', lazy=True)
+    lesson_progress = db.relationship('UserLessonProgress', backref='user', lazy=True, cascade="all, delete-orphan")
+    feedbacks = db.relationship('UserFeedback', backref='user', lazy=True, cascade="all, delete-orphan")
+    attempts = db.relationship('UserAttempt', backref='user', lazy=True, cascade="all, delete-orphan")
+    test_sessions = db.relationship('TestSession', backref='user', lazy=True, cascade="all, delete-orphan")
+    ocr_translations = db.relationship('OCRTranslation', backref='user', lazy=True, cascade="all, delete-orphan")
 
 class Lesson(db.Model):
     __tablename__ = 'lessons'
@@ -62,7 +62,7 @@ class UserLessonProgress(db.Model):
     __tablename__ = 'user_lesson_progress'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     lesson_id = db.Column(db.String(50), db.ForeignKey('lessons.id'), nullable=False)
     is_completed = db.Column(db.Boolean, default=False)
     last_accessed_at = db.Column(db.DateTime, default=datetime.now)
@@ -83,7 +83,7 @@ class UserAttempt(db.Model):
     __tablename__ = 'user_attempts'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     # Changed to flexible question_id or we can link it mainly to Test/Quiz. 
     # For now, keeping legacy structure but making foreign key optional or handled at app level if needed.
     # To avoid errors with existing code that might query this, I'll keep it simple or comment out FK constraint if table dropped.
@@ -99,19 +99,19 @@ class TestSession(db.Model):
     __tablename__ = 'test_sessions'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     total_score = db.Column(db.Float, nullable=False)
     ai_feedback = db.Column(db.Text, nullable=False)
     started_at = db.Column(db.DateTime, default=datetime.now)
     finished_at = db.Column(db.DateTime)
     
-    test_answers = db.relationship('TestAnswer', backref='test_session', lazy=True)
+    test_answers = db.relationship('TestAnswer', backref='test_session', lazy=True, cascade="all, delete-orphan")
 
 class TestAnswer(db.Model):
     __tablename__ = 'test_answers'
     
     id = db.Column(db.Integer, primary_key=True)
-    test_session_id = db.Column(db.Integer, db.ForeignKey('test_sessions.id'), nullable=False)
+    test_session_id = db.Column(db.Integer, db.ForeignKey('test_sessions.id', ondelete='CASCADE'), nullable=False)
     section = db.Column(db.Text, nullable=False)
     task_type = db.Column(db.Text, nullable=False)
     combined_question_ids = db.Column(db.Text, nullable=False)
@@ -124,7 +124,7 @@ class OCRTranslation(db.Model):
     __tablename__ = 'ocr_translations'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     original_text = db.Column(db.Text, nullable=False)
     translated_and_explained = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -132,7 +132,7 @@ class OCRTranslation(db.Model):
 class UserFeedback(db.Model):
     __tablename__ = 'user_feedback'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     feedback_text = db.Column(db.Text, nullable=False)
     sentiment = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.now)

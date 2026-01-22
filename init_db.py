@@ -44,11 +44,11 @@ class User(db.Model):
     daily_study_time_minutes = db.Column(db.Integer, default=30)
     test_date = db.Column(db.DateTime)
 
-    attempts = db.relationship("UserAttempt", backref="user", lazy=True)
-    test_sessions = db.relationship("TestSession", backref="user", lazy=True)
-    ocr_translations = db.relationship("OCRTranslation", backref="user", lazy=True)
-    lesson_progress = db.relationship("UserLessonProgress", backref="user", lazy=True)
-    feedbacks = db.relationship("UserFeedback", backref="user", lazy=True)
+    attempts = db.relationship("UserAttempt", backref="user", lazy=True, cascade="all, delete-orphan")
+    test_sessions = db.relationship("TestSession", backref="user", lazy=True, cascade="all, delete-orphan")
+    ocr_translations = db.relationship("OCRTranslation", backref="user", lazy=True, cascade="all, delete-orphan")
+    lesson_progress = db.relationship("UserLessonProgress", backref="user", lazy=True, cascade="all, delete-orphan")
+    feedbacks = db.relationship("UserFeedback", backref="user", lazy=True, cascade="all, delete-orphan")
 
 
 class Lesson(db.Model):
@@ -107,7 +107,7 @@ class UserLessonProgress(db.Model):
     __tablename__ = "user_lesson_progress"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     lesson_id = db.Column(db.String(50), db.ForeignKey("lessons.id"), nullable=False)
     is_completed = db.Column(db.Boolean, default=False)
     last_accessed_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -143,7 +143,7 @@ class UserAttempt(db.Model):
     __tablename__ = "user_attempts"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     learning_question_id = db.Column(
         db.Integer,
         db.ForeignKey("learning_questions.id"),
@@ -161,11 +161,13 @@ class TestSession(db.Model):
     __tablename__ = "test_sessions"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     total_score = db.Column(db.Float, nullable=False)
     ai_feedback = db.Column(db.Text, nullable=False)
     started_at = db.Column(db.DateTime, default=datetime.utcnow)
     finished_at = db.Column(db.DateTime)
+
+    test_answers = db.relationship("TestAnswer", backref="test_session", lazy=True, cascade="all, delete-orphan")
 
 
 class TestAnswer(db.Model):
@@ -174,7 +176,7 @@ class TestAnswer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     test_session_id = db.Column(
         db.Integer,
-        db.ForeignKey("test_sessions.id"),
+        db.ForeignKey("test_sessions.id", ondelete="CASCADE"),
         nullable=False
     )
     section = db.Column(db.Text, nullable=False)
@@ -190,7 +192,7 @@ class OCRTranslation(db.Model):
     __tablename__ = "ocr_translations"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     original_text = db.Column(db.Text, nullable=False)
     translated_and_explained = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -200,7 +202,7 @@ class UserFeedback(db.Model):
     __tablename__ = "user_feedback"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     feedback_text = db.Column(db.Text, nullable=False)
     sentiment = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

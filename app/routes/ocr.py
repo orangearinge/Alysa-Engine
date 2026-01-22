@@ -69,23 +69,23 @@ def get_ocr_history():
     """
     try:
         user_id = int(get_jwt_identity())
-        
+
         # Get pagination parameters
         page = request.args.get('page', 1, type=int)
         per_page = min(request.args.get('per_page', 20, type=int), 100)
-        
+
         # Query OCR translations for this user, ordered by most recent first
         pagination = OCRTranslation.query.filter_by(user_id=user_id)\
             .order_by(OCRTranslation.created_at.desc())\
             .paginate(page=page, per_page=per_page, error_out=False)
-        
+
         # Format the results
         history = []
         for record in pagination.items:
             try:
                 # Parse the JSON result
                 result_data = json.loads(record.translated_and_explained)
-                
+
                 history.append({
                     'id': record.id,
                     'translation': result_data.get('translation', ''),
@@ -96,7 +96,7 @@ def get_ocr_history():
             except json.JSONDecodeError:
                 # If JSON parsing fails, skip this record
                 continue
-        
+
         return jsonify({
             'history': history,
             'pagination': {
@@ -108,6 +108,6 @@ def get_ocr_history():
                 'has_prev': pagination.has_prev,
             }
         }), 200
-        
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
