@@ -4,10 +4,6 @@ from flask_jwt_extended import jwt_required
 
 chatbot_bp = Blueprint('chatbot', __name__)
 
-# Initialize connection immediately or lazily? 
-# Usually better to do it lazily or at module level if it's safe.
-# The user's snippet initializes it directly. 
-# We'll put it in a try-catch block or initialize it globally.
 try:
     print("Initializing Gradio Client for Chatbot...")
     client = Client("alifiashasa/rag-chatbot-alysa")
@@ -29,20 +25,10 @@ def chat():
     user_message = data['message']
 
     try:
-        # The user provided snippet:
-        # result = client.predict(
-        # 	question="Hello!!",
-        # 	api_name="/alysa_rag_chatbot"
-        # )
         result = client.predict(
-            question=user_message,
+            message=user_message,
             api_name="/alysa_chat"
         )
-        
-        # result is likely the response string or tuple depending on the gradio app return type.
-        # Based on typical rag-chatbot, it's usually a string or a tuple (answer, history).
-        # We will return the result as is or wrap it.
-        # Assuming result is the string response for now based on user snippet 'print(result)'.
         
         return jsonify({'response': result})
 
