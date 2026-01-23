@@ -36,7 +36,7 @@ def chat():
         # )
         result = client.predict(
             question=user_message,
-            api_name="/alysa_rag_chatbot"
+            api_name="/alysa_chat"
         )
         
         # result is likely the response string or tuple depending on the gradio app return type.
