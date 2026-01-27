@@ -1,0 +1,869 @@
+{
+  "id": "bd65570d-7eef-4cbe-97a9-ce07fb8c823c",
+  "version": "2.0",
+  "name": "Alysa",
+  "url": "https://firmamental-rosella-vexatious.ngrok-free.dev/",
+  "tests": [{
+    "id": "615580ce-e5d9-441e-9829-3aa4b649a689",
+    "name": "Login",
+    "commands": [{
+      "id": "a4350f2c-2133-4e1f-89ba-7198ff713b9f",
+      "comment": "",
+      "command": "open",
+      "target": "/admin/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "da617c3e-1aac-46b5-8749-e1d27d0f3872",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1280x775",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e55c858d-05b7-4e0b-99ea-e3791bfe0afc",
+      "comment": "",
+      "command": "click",
+      "target": "name=username",
+      "targets": [
+        ["name=username", "name"],
+        ["css=div:nth-child(1) > .w-full", "css:finder"],
+        ["xpath=//input[@name='username']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "086ec5b3-89a7-4be2-89b6-912f4397eac8",
+      "comment": "",
+      "command": "type",
+      "target": "name=username",
+      "targets": [
+        ["name=username", "name"],
+        ["css=div:nth-child(1) > .w-full", "css:finder"],
+        ["xpath=//input[@name='username']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "root"
+    }, {
+      "id": "f4227b4f-6ab6-4235-9429-36ec2ee89f32",
+      "comment": "",
+      "command": "type",
+      "target": "name=password",
+      "targets": [
+        ["name=password", "name"],
+        ["css=div:nth-child(2) > .w-full", "css:finder"],
+        ["xpath=//input[@name='password']", "xpath:attributes"],
+        ["xpath=//div[2]/input", "xpath:position"]
+      ],
+      "value": "root"
+    }, {
+      "id": "53d63a43-a807-48e3-b3f6-d0764f7d68fc",
+      "comment": "",
+      "command": "click",
+      "target": "css=.bg-zinc-900",
+      "targets": [
+        ["css=.bg-zinc-900", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "06e2ca77-8ede-4b79-87f2-17fc5deb93dc",
+    "name": "Dashboard Overview",
+    "commands": [{
+      "id": "bce77ddd-7a98-42b2-a45f-06ce512ebb81",
+      "comment": "",
+      "command": "open",
+      "target": "https://firmamental-rosella-vexatious.ngrok-free.dev/admin/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e2702b81-c5e5-448e-89f8-f7295eca9989",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1280x775",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "d159f4a5-bbbe-4fe5-837e-406d37e4ce56",
+      "comment": "",
+      "command": "click",
+      "target": "css=.bg-white:nth-child(4) > .mt-auto",
+      "targets": [
+        ["css=.bg-white:nth-child(4) > .mt-auto", "css:finder"],
+        ["xpath=//div[4]/div", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "77a1d1b5-5647-4b4e-bad3-ae3cd0860042",
+    "name": "Manajemen Pengguna (Users)",
+    "commands": [{
+      "id": "29d30ccf-0d6e-4670-b87b-daced2288e48",
+      "comment": "",
+      "command": "open",
+      "target": "https://firmamental-rosella-vexatious.ngrok-free.dev/admin/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e0195198-48f4-46b8-bcf9-dd12f46124da",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1280x775",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "5050d82b-9aa3-40bf-bc8e-fdf572bb86e0",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Users",
+      "targets": [
+        ["linkText=Users", "linkText"],
+        ["css=.items-center:nth-child(2)", "css:finder"],
+        ["xpath=//a[contains(text(),'Users')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/users')]", "xpath:href"],
+        ["xpath=//a[2]", "xpath:position"],
+        ["xpath=//a[contains(.,'Users')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "184c9e32-aa3e-4b9d-867c-5fe4ee2cd816",
+      "comment": "",
+      "command": "click",
+      "target": "name=search",
+      "targets": [
+        ["name=search", "name"],
+        ["css=.pl-4", "css:finder"],
+        ["xpath=//input[@name='search']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "d31e1d3a-6c21-4d49-963a-f4fdb0e82b1c",
+      "comment": "",
+      "command": "type",
+      "target": "name=search",
+      "targets": [
+        ["name=search", "name"],
+        ["css=.pl-4", "css:finder"],
+        ["xpath=//input[@name='search']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "wahyu"
+    }, {
+      "id": "4127ccb9-0d4f-4e38-8780-d346d099c8c2",
+      "comment": "",
+      "command": "sendKeys",
+      "target": "name=search",
+      "targets": [
+        ["name=search", "name"],
+        ["css=.pl-4", "css:finder"],
+        ["xpath=//input[@name='search']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "${KEY_ENTER}"
+    }]
+  }, {
+    "id": "03662b76-ba90-46d2-906c-8d7fb2465220",
+    "name": "Tambah Materi",
+    "commands": [{
+      "id": "f442598c-7b6f-480d-851b-6d4dfa532938",
+      "comment": "",
+      "command": "open",
+      "target": "https://firmamental-rosella-vexatious.ngrok-free.dev/admin/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2b0f3679-c472-4052-a62c-108d3358069b",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1280x775",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "7058c101-e6e0-4bde-a85d-52da6ad1c50a",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=Dashboard",
+      "targets": [
+        ["linkText=Dashboard", "linkText"],
+        ["css=.px-4:nth-child(1)", "css:finder"],
+        ["xpath=//a[contains(text(),'Dashboard')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/')]", "xpath:href"],
+        ["xpath=//a", "xpath:position"],
+        ["xpath=//a[contains(.,'Dashboard')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "41e8df83-8839-4219-9912-428cdf422f55",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=Dashboard",
+      "targets": [
+        ["linkText=Dashboard", "linkText"],
+        ["css=.px-4:nth-child(1)", "css:finder"],
+        ["xpath=//a[contains(text(),'Dashboard')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/')]", "xpath:href"],
+        ["xpath=//a", "xpath:position"],
+        ["xpath=//a[contains(.,'Dashboard')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "162d9572-b601-457c-b25b-50ce0bc11b42",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Learning",
+      "targets": [
+        ["linkText=Learning", "linkText"],
+        ["css=.items-center:nth-child(3)", "css:finder"],
+        ["xpath=//a[contains(text(),'Learning')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/learning')]", "xpath:href"],
+        ["xpath=//a[3]", "xpath:position"],
+        ["xpath=//a[contains(.,'Learning')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b5cdcb91-b1b9-4342-9c07-5a06add100a4",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=New Lesson",
+      "targets": [
+        ["linkText=New Lesson", "linkText"],
+        ["css=.px-5", "css:finder"],
+        ["xpath=//a[contains(text(),'New Lesson')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/learning/create')]", "xpath:href"],
+        ["xpath=//div[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'New Lesson')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "928e7d6e-0dc9-4b8f-af20-7ee7725e6111",
+      "comment": "",
+      "command": "click",
+      "target": "name=id",
+      "targets": [
+        ["name=id", "name"],
+        ["css=.space-y-6 > div:nth-child(1) > .w-full", "css:finder"],
+        ["xpath=//input[@name='id']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "51283e74-2427-4309-aa25-f4d3f9f46e78",
+      "comment": "",
+      "command": "type",
+      "target": "name=id",
+      "targets": [
+        ["name=id", "name"],
+        ["css=.space-y-6 > div:nth-child(1) > .w-full", "css:finder"],
+        ["xpath=//input[@name='id']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "99"
+    }, {
+      "id": "549e048a-b784-45bc-bd73-fdb23de14da1",
+      "comment": "",
+      "command": "type",
+      "target": "name=title",
+      "targets": [
+        ["name=title", "name"],
+        ["css=.space-y-6 > div:nth-child(2) > .w-full", "css:finder"],
+        ["xpath=//input[@name='title']", "xpath:attributes"],
+        ["xpath=//div[2]/input", "xpath:position"]
+      ],
+      "value": "Listening for Specific Information"
+    }, {
+      "id": "73aa0ab8-e0c4-4aeb-9fb5-d9229f34ab32",
+      "comment": "",
+      "command": "click",
+      "target": "name=description",
+      "targets": [
+        ["name=description", "name"],
+        ["css=div:nth-child(3) > .w-full", "css:finder"],
+        ["xpath=//textarea[@name='description']", "xpath:attributes"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "dfce5c51-b584-4f12-a3c2-b35cefaddf6b",
+      "comment": "",
+      "command": "type",
+      "target": "name=description",
+      "targets": [
+        ["name=description", "name"],
+        ["css=div:nth-child(3) > .w-full", "css:finder"],
+        ["xpath=//textarea[@name='description']", "xpath:attributes"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": "Listening for Specific Information"
+    }, {
+      "id": "ee2f0666-dc3b-4e04-a270-2014ace01195",
+      "comment": "",
+      "command": "click",
+      "target": "name=duration",
+      "targets": [
+        ["name=duration", "name"],
+        ["css=.grid > div:nth-child(2) > .w-full", "css:finder"],
+        ["xpath=//input[@name='duration']", "xpath:attributes"],
+        ["xpath=//div[4]/div[2]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "8541f8b0-4e0f-4048-9010-c8eba4b52337",
+      "comment": "",
+      "command": "type",
+      "target": "name=duration",
+      "targets": [
+        ["name=duration", "name"],
+        ["css=.grid > div:nth-child(2) > .w-full", "css:finder"],
+        ["xpath=//input[@name='duration']", "xpath:attributes"],
+        ["xpath=//div[4]/div[2]/input", "xpath:position"]
+      ],
+      "value": "30"
+    }, {
+      "id": "8ef74247-e8cb-4ba5-8148-8c2fef9b9153",
+      "comment": "",
+      "command": "click",
+      "target": "css=.px-6",
+      "targets": [
+        ["css=.px-6", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[5]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Save Lesson')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "7039da21-c1d7-44c3-8293-20017f0de2d5",
+    "name": "Edit Section",
+    "commands": [{
+      "id": "3dceda8d-c2e0-4ef4-9bc9-29433f5d3552",
+      "comment": "",
+      "command": "open",
+      "target": "https://firmamental-rosella-vexatious.ngrok-free.dev/admin/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "dcc1082a-b629-4fbf-bc01-c8e262f5c084",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1280x775",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "3e077c0b-23f9-458c-ac38-01d95da40ac2",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Learning",
+      "targets": [
+        ["linkText=Learning", "linkText"],
+        ["css=.items-center:nth-child(3)", "css:finder"],
+        ["xpath=//a[contains(text(),'Learning')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/learning')]", "xpath:href"],
+        ["xpath=//a[3]", "xpath:position"],
+        ["xpath=//a[contains(.,'Learning')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9378108e-f549-45e8-a288-16bd5b8fdb6d",
+      "comment": "",
+      "command": "click",
+      "target": "css=.hover\\3A bg-zinc-50\\/50:nth-child(1) .p-2:nth-child(2) > .h-5",
+      "targets": [
+        ["css=.hover\\3A bg-zinc-50\\/50:nth-child(1) .p-2:nth-child(2) > .h-5", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "b019f7ea-8428-4b59-9099-d33898ed8af2",
+      "comment": "",
+      "command": "click",
+      "target": "name=title",
+      "targets": [
+        ["name=title", "name"],
+        ["css=.space-y-6 > div:nth-child(2) > .w-full", "css:finder"],
+        ["xpath=//input[@name='title']", "xpath:attributes"],
+        ["xpath=//div[2]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "c6b58ea4-40b8-4840-9372-442c26122162",
+      "comment": "",
+      "command": "type",
+      "target": "name=title",
+      "targets": [
+        ["name=title", "name"],
+        ["css=.space-y-6 > div:nth-child(2) > .w-full", "css:finder"],
+        ["xpath=//input[@name='title']", "xpath:attributes"],
+        ["xpath=//div[2]/input", "xpath:position"]
+      ],
+      "value": "Listening for Specific Information edited"
+    }, {
+      "id": "4010c8a0-7cc8-4f61-8684-c0dd820dbe66",
+      "comment": "",
+      "command": "click",
+      "target": "css=.px-6",
+      "targets": [
+        ["css=.px-6", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[5]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Save Lesson')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "84625c32-feb2-43de-98f1-3f6bca0348a8",
+    "name": "Tambah Kuis",
+    "commands": [{
+      "id": "97ccc296-0080-4d67-a733-9866deab592e",
+      "comment": "",
+      "command": "open",
+      "target": "https://firmamental-rosella-vexatious.ngrok-free.dev/admin/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "811ecced-92ee-4ccc-9063-853d333105db",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1280x775",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e5e04a36-750e-43bc-a5d9-5be105592427",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Quizzes",
+      "targets": [
+        ["linkText=Quizzes", "linkText"],
+        ["css=.items-center:nth-child(4)", "css:finder"],
+        ["xpath=//a[contains(text(),'Quizzes')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/quiz')]", "xpath:href"],
+        ["xpath=//a[4]", "xpath:position"],
+        ["xpath=//a[contains(.,'Quizzes')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "34f8c45c-e4f5-495f-81fe-6bbc9955ce8f",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=New Quiz",
+      "targets": [
+        ["linkText=New Quiz", "linkText"],
+        ["css=.px-5", "css:finder"],
+        ["xpath=//a[contains(text(),'New Quiz')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/quiz/create')]", "xpath:href"],
+        ["xpath=//div[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'New Quiz')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "7ce26775-50b1-4c8e-8390-809bc7af13f3",
+      "comment": "",
+      "command": "click",
+      "target": "name=id",
+      "targets": [
+        ["name=id", "name"],
+        ["css=div:nth-child(1) > .w-full", "css:finder"],
+        ["xpath=//input[@name='id']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "3a434fa7-b73f-4724-8ae8-e0901dfefa00",
+      "comment": "",
+      "command": "type",
+      "target": "name=id",
+      "targets": [
+        ["name=id", "name"],
+        ["css=div:nth-child(1) > .w-full", "css:finder"],
+        ["xpath=//input[@name='id']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "99"
+    }, {
+      "id": "5a7476ee-a29a-475a-b1a9-3cd8331beed0",
+      "comment": "",
+      "command": "type",
+      "target": "name=title",
+      "targets": [
+        ["name=title", "name"],
+        ["css=div:nth-child(2) > .p-2", "css:finder"],
+        ["xpath=//input[@name='title']", "xpath:attributes"],
+        ["xpath=//div[2]/input", "xpath:position"]
+      ],
+      "value": "Note Completion Quiz"
+    }, {
+      "id": "f143f984-50a1-4428-9b74-776d2c3c1ab5",
+      "comment": "",
+      "command": "click",
+      "target": "css=.px-6",
+      "targets": [
+        ["css=.px-6", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Save Quiz')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "e1e603d6-188c-41e9-9cb6-fc6b942159ac",
+    "name": "Tambah Pertanyaan",
+    "commands": [{
+      "id": "b62097dd-d825-49a1-a9c6-d5c0d7b831a5",
+      "comment": "",
+      "command": "open",
+      "target": "https://firmamental-rosella-vexatious.ngrok-free.dev/admin/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e4ac6aed-ab4a-4cf3-8d8f-4b7af62c7044",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1280x775",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "b63d005c-aecf-419d-a1b1-7a5208dbc626",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=Learning",
+      "targets": [
+        ["linkText=Learning", "linkText"],
+        ["css=.items-center:nth-child(3)", "css:finder"],
+        ["xpath=//a[contains(text(),'Learning')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/learning')]", "xpath:href"],
+        ["xpath=//a[3]", "xpath:position"],
+        ["xpath=//a[contains(.,'Learning')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "83bb1e71-14df-4ede-ab89-d886eaf8251c",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=Learning",
+      "targets": [
+        ["linkText=Learning", "linkText"],
+        ["css=.items-center:nth-child(3)", "css:finder"],
+        ["xpath=//a[contains(text(),'Learning')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/learning')]", "xpath:href"],
+        ["xpath=//a[3]", "xpath:position"],
+        ["xpath=//a[contains(.,'Learning')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "8ac82ac4-0e6e-428c-aee4-70e185112761",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Quizzes",
+      "targets": [
+        ["linkText=Quizzes", "linkText"],
+        ["css=.items-center:nth-child(4)", "css:finder"],
+        ["xpath=//a[contains(text(),'Quizzes')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/quiz')]", "xpath:href"],
+        ["xpath=//a[4]", "xpath:position"],
+        ["xpath=//a[contains(.,'Quizzes')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "ab3f6ce2-4550-437c-86e2-686cf948ada4",
+      "comment": "",
+      "command": "click",
+      "target": "css=.hover\\3A bg-zinc-50\\/50:nth-child(1) .flex > .p-2:nth-child(1) > .h-5",
+      "targets": [
+        ["css=.hover\\3A bg-zinc-50\\/50:nth-child(1) .flex > .p-2:nth-child(1) > .h-5", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "c84aee30-1d8f-478e-94f3-bc6cc1884f3d",
+      "comment": "",
+      "command": "click",
+      "target": "name=question_text",
+      "targets": [
+        ["name=question_text", "name"],
+        ["css=div:nth-child(1) > .w-full", "css:finder"],
+        ["xpath=//textarea[@name='question_text']", "xpath:attributes"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "0391a41c-eda1-4304-b6c0-19f533d32319",
+      "comment": "",
+      "command": "type",
+      "target": "name=question_text",
+      "targets": [
+        ["name=question_text", "name"],
+        ["css=div:nth-child(1) > .w-full", "css:finder"],
+        ["xpath=//textarea[@name='question_text']", "xpath:attributes"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": "What should you listen for when names are spelled?"
+    }, {
+      "id": "6da4f29e-5954-4b21-a3c7-c1b690f3c509",
+      "comment": "",
+      "command": "click",
+      "target": "name=option_0",
+      "targets": [
+        ["name=option_0", "name"],
+        ["css=div:nth-child(1) > .flex > .w-full", "css:finder"],
+        ["xpath=//input[@name='option_0']", "xpath:attributes"],
+        ["xpath=//input[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "fc588c31-12f3-4d49-bc95-a0b4499511be",
+      "comment": "",
+      "command": "type",
+      "target": "name=option_0",
+      "targets": [
+        ["name=option_0", "name"],
+        ["css=div:nth-child(1) > .flex > .w-full", "css:finder"],
+        ["xpath=//input[@name='option_0']", "xpath:attributes"],
+        ["xpath=//input[2]", "xpath:position"]
+      ],
+      "value": "1"
+    }, {
+      "id": "2c1ebe97-8040-4c1d-90c0-4b4b5b755e72",
+      "comment": "",
+      "command": "click",
+      "target": "name=option_2",
+      "targets": [
+        ["name=option_2", "name"],
+        ["css=div:nth-child(3) .w-full", "css:finder"],
+        ["xpath=//input[@name='option_2']", "xpath:attributes"],
+        ["xpath=//div[3]/div/input[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "69a9925d-206a-4e2e-b1e1-033c69a7b388",
+      "comment": "",
+      "command": "type",
+      "target": "name=option_2",
+      "targets": [
+        ["name=option_2", "name"],
+        ["css=div:nth-child(3) .w-full", "css:finder"],
+        ["xpath=//input[@name='option_2']", "xpath:attributes"],
+        ["xpath=//div[3]/div/input[2]", "xpath:position"]
+      ],
+      "value": "2"
+    }, {
+      "id": "fb190091-6ba9-4b18-b417-6884d34b446c",
+      "comment": "",
+      "command": "click",
+      "target": "name=option_1",
+      "targets": [
+        ["name=option_1", "name"],
+        ["css=div:nth-child(2) > .flex > .w-full", "css:finder"],
+        ["xpath=//input[@name='option_1']", "xpath:attributes"],
+        ["xpath=//div[2]/div/input[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "c124094e-6687-4d03-ad76-8e6b7436d126",
+      "comment": "",
+      "command": "type",
+      "target": "name=option_1",
+      "targets": [
+        ["name=option_1", "name"],
+        ["css=div:nth-child(2) > .flex > .w-full", "css:finder"],
+        ["xpath=//input[@name='option_1']", "xpath:attributes"],
+        ["xpath=//div[2]/div/input[2]", "xpath:position"]
+      ],
+      "value": "3"
+    }, {
+      "id": "1da63593-37cd-4b63-95b8-fa37905e1cf7",
+      "comment": "",
+      "command": "click",
+      "target": "name=option_3",
+      "targets": [
+        ["name=option_3", "name"],
+        ["css=div:nth-child(4) .w-full", "css:finder"],
+        ["xpath=//input[@name='option_3']", "xpath:attributes"],
+        ["xpath=//div[4]/div/input[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "3c50e08a-1b43-4859-93e5-f37af2173051",
+      "comment": "",
+      "command": "runScript",
+      "target": "window.scrollTo(0,51)",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "afa9bc9a-9269-4b63-84ce-52bc08fcc4ca",
+      "comment": "",
+      "command": "type",
+      "target": "name=option_3",
+      "targets": [
+        ["name=option_3", "name"],
+        ["css=div:nth-child(4) .w-full", "css:finder"],
+        ["xpath=//input[@name='option_3']", "xpath:attributes"],
+        ["xpath=//div[4]/div/input[2]", "xpath:position"]
+      ],
+      "value": "4"
+    }, {
+      "id": "494c3f6b-a6c9-4a18-9be6-259a3f51bc9d",
+      "comment": "",
+      "command": "click",
+      "target": "css=.py-2",
+      "targets": [
+        ["css=.py-2", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//form/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Add Question')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "ccf64682-22e6-441c-b512-4e77507a11fe",
+    "name": "Kelola Test",
+    "commands": [{
+      "id": "ffd53d7c-6c36-4c61-b3a4-e8d730c2fe2a",
+      "comment": "",
+      "command": "open",
+      "target": "https://firmamental-rosella-vexatious.ngrok-free.dev/admin/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "42bfdbd7-c556-48f3-b94c-8c3578e6f228",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1280x775",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "5afdb966-e69f-4f91-a32a-927c8f33183b",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Tests",
+      "targets": [
+        ["linkText=Tests", "linkText"],
+        ["css=.items-center:nth-child(5)", "css:finder"],
+        ["xpath=//a[contains(text(),'Tests')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/tests')]", "xpath:href"],
+        ["xpath=//a[5]", "xpath:position"],
+        ["xpath=//a[contains(.,'Tests')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "599e54f6-a2fe-43ab-90a6-61199662e3db",
+      "comment": "",
+      "command": "click",
+      "target": "css=.hover\\3A bg-zinc-50\\/50:nth-child(1) .flex > .p-2",
+      "targets": [
+        ["css=.hover\\3A bg-zinc-50\\/50:nth-child(1) .flex > .p-2", "css:finder"],
+        ["xpath=//a[contains(@href, '/admin/tests/edit/1')]", "xpath:href"],
+        ["xpath=//td[3]/div/a", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "443dda65-d866-46cd-bb53-2e9cfc00edde",
+      "comment": "",
+      "command": "click",
+      "target": "name=prompt",
+      "targets": [
+        ["name=prompt", "name"],
+        ["css=.space-y-6 > div:nth-child(2) > .w-full", "css:finder"],
+        ["xpath=//textarea[@name='prompt']", "xpath:attributes"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "084f5b88-16d2-497c-8c99-09ce4e9e318d",
+      "comment": "",
+      "command": "type",
+      "target": "name=prompt",
+      "targets": [
+        ["name=prompt", "name"],
+        ["css=.space-y-6 > div:nth-child(2) > .w-full", "css:finder"],
+        ["xpath=//textarea[@name='prompt']", "xpath:attributes"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": "Do you work or are you a student??"
+    }, {
+      "id": "9a0ec607-72cd-46f3-8e92-579403c2b9be",
+      "comment": "",
+      "command": "click",
+      "target": "css=.focus\\3Aring-4",
+      "targets": [
+        ["css=.focus\\3Aring-4", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[5]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Update Question')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "1c8fb3f8-209f-489b-8518-39c4af35837a",
+    "name": "Cek Sentimen",
+    "commands": [{
+      "id": "619ac149-aa1a-4ba7-bb76-e6bc1b26d426",
+      "comment": "",
+      "command": "open",
+      "target": "https://firmamental-rosella-vexatious.ngrok-free.dev/admin/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "822e5a98-e267-48f6-af13-27c030e18306",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1280x775",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e217a4f2-6c1e-4a8e-b7e4-d5fa69e6d90d",
+      "comment": "",
+      "command": "click",
+      "target": "css=.items-center:nth-child(6)",
+      "targets": [
+        ["css=.items-center:nth-child(6)", "css:finder"],
+        ["xpath=//a[contains(text(),'Sentiment\n          Analysis')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/sentiment')]", "xpath:href"],
+        ["xpath=//a[6]", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "87df92ea-e6d1-435b-b61a-6cf1c55ad648",
+    "name": "logout",
+    "commands": [{
+      "id": "03d67a6b-ef08-4c1f-81cb-42173c110e13",
+      "comment": "",
+      "command": "open",
+      "target": "https://firmamental-rosella-vexatious.ngrok-free.dev/admin/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "babf25ac-0df2-4b15-8c28-be1086d7833b",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1280x775",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "1d771203-d13f-4397-828f-08e3570c4708",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Logout",
+      "targets": [
+        ["linkText=Logout", "linkText"],
+        ["css=.block", "css:finder"],
+        ["xpath=//a[contains(text(),'Logout')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/admin/logout')]", "xpath:href"],
+        ["xpath=//a[7]", "xpath:position"],
+        ["xpath=//a[contains(.,'Logout')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "f0df8296-96fe-4d83-9c27-3c2b28a7bce0",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["615580ce-e5d9-441e-9829-3aa4b649a689"]
+  }],
+  "urls": ["https://firmamental-rosella-vexatious.ngrok-free.dev/", "https://firmamental-rosella-vexatious.ngrok-free.dev/admin/"],
+  "plugins": []
+}
